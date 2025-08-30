@@ -1,10 +1,23 @@
 package com.adacar.central.model;
 
-public class Cliente {
-  //        <<abstract>>
-  //        - String nome
-  //        - String documento
-  //        + String getDocumento()
-  //    }
+public abstract class Cliente {
+    protected String nome;
 
+    public Cliente(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public abstract String getDocumento();
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "nome='" + nome + '\'' +
+                ", documento='" + getDocumento() + '\'' +
+                '}';
+    }
 }
