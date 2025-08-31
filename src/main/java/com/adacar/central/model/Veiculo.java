@@ -56,12 +56,12 @@ public class Veiculo {
         this.valorDiaria = valorDiaria;
     }
 
-    public boolean isAlugado() {
+    public boolean getIsAlugado() {
         return isAlugado;
     }
 
     public void setIsAlugado(boolean isAlugado) {
-        isAlugado = isAlugado;
+        this.isAlugado = isAlugado;
     }
 
     @Override
