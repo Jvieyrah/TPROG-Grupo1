@@ -6,9 +6,15 @@ import java.time.LocalDateTime;
 public class Aluguel {
     private Cliente cliente;
     private Veiculo veiculo;
+
+
     private String localRetirada;
     private LocalDateTime dataHoraRetirada;
     private LocalDateTime dataHoraDevolucao;
+
+    public Aluguel() {
+    }
+
 
     public Aluguel(Cliente cliente, Veiculo veiculo, String localRetirada, LocalDateTime dataHoraRetirada) {
         this.cliente = cliente;
@@ -31,6 +37,30 @@ public class Aluguel {
 
     public LocalDateTime getDataHoraDevolucao() {
         return dataHoraDevolucao;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
+    }
+
+    public String getLocalRetirada() {
+        return localRetirada;
+    }
+
+    public void setLocalRetirada(String localRetirada) {
+        this.localRetirada = localRetirada;
+    }
+
+    public void setDataHoraRetirada(LocalDateTime dataHoraRetirada) {
+        this.dataHoraRetirada = dataHoraRetirada;
+    }
+
+    public void setDataHoraDevolucao(LocalDateTime dataHoraDevolucao) {
+        this.dataHoraDevolucao = dataHoraDevolucao;
     }
 
     @Override

@@ -1,0 +1,24 @@
+
+[
+  {
+    "placa":"ABC1234",
+    "nome":"Carro A",
+    "tipo":"PEQUENO",
+    "valorDiaria":100.0,
+    "isAlugado":true
+  },
+  {
+    "placa":"DEF5678",
+    "nome":"Carro B",
+    "tipo":"MEDIO",
+    "valorDiaria":150.0,
+    "isAlugado":true
+  },
+  {
+  "placa":"GHI9012",
+  "nome":"Carro C",
+  "tipo":"SUV",
+  "valorDiaria":200.0,
+  "isAlugado":false
+  }
+]

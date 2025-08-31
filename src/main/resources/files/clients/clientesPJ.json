@@ -1,0 +1,18 @@
+[
+  {
+    "nome": "Ciente Pessoa juridica de Teste 2",
+    "cnpj": "12.345.678/0001-95"
+  },
+  {
+    "nome": "Ciente Pessoa juridica de Teste 3",
+    "cnpj": "98.765.432/0001-10"
+  },
+  {
+    "nome": "Ciente Pessoa juridica de Teste 4",
+    "cnpj": "11.222.333/0001-44"
+  },
+  {
+    "nome": "Ciente Pessoa juridica de Teste 5",
+    "cnpj": "55.666.777/0001-88"
+  }
+]
