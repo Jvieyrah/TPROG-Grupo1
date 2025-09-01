@@ -12,6 +12,9 @@ public class Veiculo {
     private double valorDiaria;
     private boolean isAlugado;
 
+    public Veiculo() {
+    }
+
     public Veiculo(String placa, String nome, TipoVeiculo tipo) {
         this.placa = placa;
         this.nome = nome;
@@ -24,24 +27,41 @@ public class Veiculo {
         return placa;
     }
 
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
     public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public TipoVeiculo getTipo() {
         return tipo;
     }
 
+    public void setTipo(TipoVeiculo tipo) {
+        this.tipo = tipo;
+        this.valorDiaria = tipo.getValorDiaria();
+    }
+
     public double getValorDiaria() {
         return valorDiaria;
     }
 
-    public boolean isAlugado() {
+    public void setValorDiaria(double valorDiaria) {
+        this.valorDiaria = valorDiaria;
+    }
+
+    public boolean getIsAlugado() {
         return isAlugado;
     }
 
-    public void setAlugado(boolean alugado) {
-        isAlugado = alugado;
+    public void setIsAlugado(boolean isAlugado) {
+        this.isAlugado = isAlugado;
     }
 
     @Override

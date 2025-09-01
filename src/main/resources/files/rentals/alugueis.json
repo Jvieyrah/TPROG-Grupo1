@@ -1,0 +1,33 @@
+[ {
+  "cliente" : {
+    "nome" : "Ciente Pessoa Fisica de Teste 2",
+    "documento" : "123.456.789-01",
+    "cpf" : "123.456.789-01"
+  },
+  "veiculo" : {
+    "placa" : "ABC1234",
+    "nome" : "Carro A",
+    "tipo" : "PEQUENO",
+    "valorDiaria" : 100.0,
+    "isAlugado" : false
+  },
+  "localRetirada" : "São Paulo",
+  "dataHoraRetirada" : [ 2023, 10, 1, 10, 0 ],
+  "dataHoraDevolucao" : [ 2023, 10, 5, 10, 0 ]
+}, {
+  "cliente" : {
+    "nome" : "Ciente Pessoa juridica de Teste 2",
+    "documento" : "12.345.678/0001-95",
+    "cnpj" : "12.345.678/0001-95"
+  },
+  "veiculo" : {
+    "placa" : "DEF5678",
+    "nome" : "Carro B",
+    "tipo" : "MEDIO",
+    "valorDiaria" : 150.0,
+    "isAlugado" : false
+  },
+  "localRetirada" : "Rio de Janeiro",
+  "dataHoraRetirada" : [ 2023, 10, 2, 9, 0 ],
+  "dataHoraDevolucao" : [ 2023, 10, 6, 9, 0 ]
+} ]
