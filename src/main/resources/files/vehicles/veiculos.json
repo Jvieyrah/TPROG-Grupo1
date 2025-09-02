@@ -16,4 +16,10 @@
   "tipo" : "SUV",
   "valorDiaria" : 200.0,
   "isAlugado" : false
+},{
+  "placa" : "ABC-1234",
+  "nome" : "Tesla Model X",
+  "tipo" : "SUV",
+  "valorDiaria" : 200.0,
+  "isAlugado" : true
 } ]

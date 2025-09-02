@@ -34,4 +34,8 @@
   "nome" : "Ciente Pessoa Fisica de Teste 10",
   "documento" : "123.456.789-09",
   "cpf" : "123.456.789-09"
+}, {
+  "nome" : "João Vieira",
+  "documento" : "123.456.789-00",
+  "cpf" : "123.456.789-00"
 } ]
