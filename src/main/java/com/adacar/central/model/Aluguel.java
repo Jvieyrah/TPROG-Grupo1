@@ -1,5 +1,7 @@
 package com.adacar.central.model;
 
+import com.adacar.central.enums.StatusLocacao;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -11,6 +13,7 @@ public class Aluguel {
     private String localRetirada;
     private LocalDateTime dataHoraRetirada;
     private LocalDateTime dataHoraDevolucao;
+    private StatusLocacao statusLocacao;
 
     public Aluguel() {
     }
@@ -21,6 +24,7 @@ public class Aluguel {
         this.veiculo = veiculo;
         this.localRetirada = localRetirada;
         this.dataHoraRetirada = dataHoraRetirada;
+        this.statusLocacao = StatusLocacao.EM_ANDAMENTO;
     }
 
     public Cliente getCliente() {
@@ -45,6 +49,14 @@ public class Aluguel {
 
     public void setVeiculo(Veiculo veiculo) {
         this.veiculo = veiculo;
+    }
+
+    public void setStatus(StatusLocacao status) {
+        this.statusLocacao = status;
+    }
+
+    public StatusLocacao getStatus() {
+        return statusLocacao;
     }
 
     public String getLocalRetirada() {

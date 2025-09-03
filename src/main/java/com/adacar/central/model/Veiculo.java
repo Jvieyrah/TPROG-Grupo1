@@ -1,6 +1,7 @@
 package com.adacar.central.model;
 
 
+import com.adacar.central.enums.StatusVeiculo;
 import com.adacar.central.enums.TipoVeiculo;
 
 import java.util.Objects;
@@ -10,7 +11,8 @@ public class Veiculo {
     private String nome;
     private TipoVeiculo tipo;
     private double valorDiaria;
-    private boolean isAlugado;
+    private StatusVeiculo statusVeiculo;
+
 
     public Veiculo() {
     }
@@ -20,7 +22,7 @@ public class Veiculo {
         this.nome = nome;
         this.tipo = tipo;
         this.valorDiaria = tipo.getValorDiaria();
-        this.isAlugado = false;
+        this.statusVeiculo = StatusVeiculo.DISPONIVEL;
     }
 
     public String getPlaca() {
@@ -43,6 +45,18 @@ public class Veiculo {
         return tipo;
     }
 
+    public StatusVeiculo getStatus() {
+        return statusVeiculo;
+    }
+
+    public void setStatus(StatusVeiculo status) {
+        this.statusVeiculo = status;
+    }
+
+    public boolean podeSerAlugado() {
+        return this.statusVeiculo == StatusVeiculo.DISPONIVEL;
+    }
+
     public void setTipo(TipoVeiculo tipo) {
         this.tipo = tipo;
         this.valorDiaria = tipo.getValorDiaria();
@@ -56,14 +70,6 @@ public class Veiculo {
         this.valorDiaria = valorDiaria;
     }
 
-    public boolean getIsAlugado() {
-        return isAlugado;
-    }
-
-    public void setIsAlugado(boolean isAlugado) {
-        this.isAlugado = isAlugado;
-    }
-
     @Override
     public String toString() {
         return "Veiculo{" +
@@ -71,7 +77,6 @@ public class Veiculo {
                 ", nome='" + nome + '\'' +
                 ", tipo=" + tipo +
                 ", valorDiaria=" + valorDiaria +
-                ", isAlugado=" + isAlugado +
                 '}';
     }
 }
