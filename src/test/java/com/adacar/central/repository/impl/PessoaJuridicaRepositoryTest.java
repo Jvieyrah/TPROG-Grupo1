@@ -40,7 +40,7 @@ class PessoaJuridicaRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    testFile = new File(tempDir, "veiculosTest.json");
+    testFile = new File(tempDir, "pjTest.json");
     // Configura o repositório para usar o arquivo de teste temporário
     pessoaJuridicaRepository.setFile(testFile);
   }
@@ -65,8 +65,11 @@ class PessoaJuridicaRepositoryTest {
   @Test
   void testFindById() throws IOException {
     // Arrange
-    PessoaJuridica mockPessoa = new PessoaJuridica("123456789", "Empresa A");
-    when(jsonDataReader.readList(testFile, PessoaJuridica.class)).thenReturn(List.of(mockPessoa));
+    PessoaJuridica mockPessoa1 = new PessoaJuridica("Empresa A","123456789" );
+    PessoaJuridica mockPessoa2 = new PessoaJuridica( "Empresa B", "987654321");
+    when(jsonDataReader.readList(eq(testFile), eq(PessoaJuridica.class)))
+        .thenReturn(List.of(mockPessoa1, mockPessoa2));
+
 
     // Act
     PessoaJuridica pessoa = pessoaJuridicaRepository.findById("123456789");
@@ -80,9 +83,9 @@ class PessoaJuridicaRepositoryTest {
   @Test
   void testSave() throws IOException {
     // Arrange
-    PessoaJuridica newPessoa = new PessoaJuridica("987654321", "Empresa B");
+    PessoaJuridica newPessoa = new PessoaJuridica("Empresa B", "987654321");
     when(jsonDataReader.readList(testFile, PessoaJuridica.class)).thenReturn(
-        List.of(new PessoaJuridica("123456789", "Empresa A")));
+        List.of(new PessoaJuridica( "Empresa A", "123456789")));
 
     // Act
     pessoaJuridicaRepository.save(newPessoa);
@@ -95,29 +98,29 @@ class PessoaJuridicaRepositoryTest {
   @Test
   void testUpdate() throws IOException {
     // Arrange
-    PessoaJuridica existingPessoa = new PessoaJuridica("123456789", "Empresa A");
-    PessoaJuridica updatedPessoa = new PessoaJuridica("123456789", "Empresa A Atualizada");
+    PessoaJuridica existingPessoa = new PessoaJuridica("Empresa A", "123456789");
+    PessoaJuridica updatedPessoa = new PessoaJuridica("Empresa A Atualizada", "123456789");
     when(jsonDataReader.readList(testFile, PessoaJuridica.class)).thenReturn(List.of(existingPessoa));
 
     // Act
     pessoaJuridicaRepository.update(updatedPessoa);
 
     // Assert
-    verify(jsonDataReader, times(1)).readList(testFile, PessoaJuridica.class);
+    verify(jsonDataReader, times(2)).readList(testFile, PessoaJuridica.class);
     verify(jsonDataWriter, times(1)).writeList(eq(testFile), anyList());
   }
 
   @Test
   void testDelete() throws IOException {
     // Arrange
-    PessoaJuridica existingPessoa = new PessoaJuridica("123456789", "Empresa A");
+    PessoaJuridica existingPessoa = new PessoaJuridica("Empresa A", "123456789");
     when(jsonDataReader.readList(testFile, PessoaJuridica.class)).thenReturn(List.of(existingPessoa));
 
     // Act
     pessoaJuridicaRepository.delete("123456789");
 
     // Assert
-    verify(jsonDataReader, times(1)).readList(testFile, PessoaJuridica.class);
+    verify(jsonDataReader, times(2)).readList(testFile, PessoaJuridica.class);
     verify(jsonDataWriter, times(1)).writeList(eq(testFile), anyList());
   }
 

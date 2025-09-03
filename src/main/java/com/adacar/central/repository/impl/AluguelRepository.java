@@ -3,6 +3,7 @@ package com.adacar.central.repository.impl;
 import com.adacar.central.application.Impl.JsonDataReader;
 import com.adacar.central.application.Impl.JsonDataWriter;
 import com.adacar.central.model.Aluguel;
+import com.adacar.central.model.PessoaFisica;
 import com.adacar.central.repository.interfaces.IRepository;
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AluguelRepository implements IRepository<Aluguel> {
-  private final JsonDataWriter<Aluguel> jsonDataWriter = new JsonDataWriter<>();
-  private final JsonDataReader<Aluguel> jsonDataReader = new JsonDataReader<>();
+  private JsonDataWriter<Aluguel> jsonDataWriter = new JsonDataWriter<>();
+  private JsonDataReader<Aluguel> jsonDataReader = new JsonDataReader<>();
 
   private File file = new File("src/main/resources/files/rentals/alugueis.json");
 
@@ -81,5 +82,19 @@ public class AluguelRepository implements IRepository<Aluguel> {
     } catch (IOException e) {
       throw new RuntimeException("Erro ao deletar Aluguel: " + e.getMessage(), e);
     }
+  }
+
+  //classes abaixo exclusivos para testes
+  // Métodos setters para injeção de dependência via Mockito
+  public void setJsonDataReader(JsonDataReader<Aluguel> jsonDataReader) {
+    this.jsonDataReader = jsonDataReader;
+  }
+
+  public void setJsonDataWriter(JsonDataWriter<Aluguel> jsonDataWriter) {
+    this.jsonDataWriter = jsonDataWriter;
+  }
+
+  public void setFile(File file) {
+    this.file = file;
   }
 }

@@ -3,6 +3,7 @@ package com.adacar.central.repository.impl;
 import com.adacar.central.application.Impl.JsonDataReader;
 import com.adacar.central.application.Impl.JsonDataWriter;
 import com.adacar.central.model.PessoaFisica;
+import com.adacar.central.model.PessoaJuridica;
 import com.adacar.central.repository.interfaces.IRepository;
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +12,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PessoaFisicaRepository implements IRepository<PessoaFisica> {
-  private final JsonDataWriter<PessoaFisica> jsonDataWriter = new JsonDataWriter<>();
-  private final JsonDataReader<PessoaFisica> jsonDataReader = new JsonDataReader<>();
+  private JsonDataWriter<PessoaFisica> jsonDataWriter = new JsonDataWriter<>();
+  private JsonDataReader<PessoaFisica> jsonDataReader = new JsonDataReader<>();
 
   private File file = new File("src/main/resources/files/clients/clientesPF.json");
 
@@ -78,6 +79,20 @@ for (PessoaFisica pessoaFisica : pessoasFisicas){
   @Override
   public void delete(String id1, String id2) throws IOException {
     throw new UnsupportedOperationException("Use delete(String id) para deletar uma pessoa física.");
+  }
+
+  //classes abaixo exclusivos para testes
+  // Métodos setters para injeção de dependência via Mockito
+  public void setJsonDataReader(JsonDataReader<PessoaFisica> jsonDataReader) {
+    this.jsonDataReader = jsonDataReader;
+  }
+
+  public void setJsonDataWriter(JsonDataWriter<PessoaFisica> jsonDataWriter) {
+    this.jsonDataWriter = jsonDataWriter;
+  }
+
+  public void setFile(File file) {
+    this.file = file;
   }
 
 }
