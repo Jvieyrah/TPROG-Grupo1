@@ -91,7 +91,7 @@ public class CentralApplication {
 						" na data/hora " + aluguel1.getDataHoraRetirada());
 				return;
 			}
-			tesla.setIsAlugado(true);
+			//tesla.setIsAlugado(true);
 			veiculoRepository.update(tesla);
 			aluguelRepository.save(aluguel1);
 			System.out.println("aluguel criado: " + aluguel1 + " e adicionado ao arquivo alugueis.json");

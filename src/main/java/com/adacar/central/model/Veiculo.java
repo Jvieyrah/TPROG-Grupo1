@@ -4,6 +4,7 @@ package com.adacar.central.model;
 import com.adacar.central.enums.StatusVeiculo;
 import com.adacar.central.enums.TipoVeiculo;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.Objects;
 
 public class Veiculo {
@@ -11,6 +12,7 @@ public class Veiculo {
     private String nome;
     private TipoVeiculo tipo;
     private double valorDiaria;
+    @JsonAlias({"status"})
     private StatusVeiculo statusVeiculo;
 
 
@@ -53,9 +55,9 @@ public class Veiculo {
         this.statusVeiculo = status;
     }
 
-    public boolean podeSerAlugado() {
-        return this.statusVeiculo == StatusVeiculo.DISPONIVEL;
-    }
+//    public boolean podeSerAlugado() {
+//        return this.statusVeiculo == StatusVeiculo.DISPONIVEL;
+//    }
 
     public void setTipo(TipoVeiculo tipo) {
         this.tipo = tipo;
