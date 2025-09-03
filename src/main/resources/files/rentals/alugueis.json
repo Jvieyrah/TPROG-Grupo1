@@ -16,18 +16,18 @@
   "dataHoraDevolucao" : [ 2023, 10, 5, 10, 0 ]
 }, {
   "cliente" : {
-    "nome" : "Ciente Pessoa juridica de Teste 2",
-    "documento" : "12.345.678/0001-95",
-    "cnpj" : "12.345.678/0001-95"
+    "nome" : "João Vieira",
+    "documento" : "123.456.789-00",
+    "cpf" : "123.456.789-00"
   },
   "veiculo" : {
-    "placa" : "DEF5678",
-    "nome" : "Carro B",
-    "tipo" : "MEDIO",
-    "valorDiaria" : 150.0,
-    "isAlugado" : false
+    "placa" : "ABC-1234",
+    "nome" : "Tesla Model X",
+    "tipo" : "SUV",
+    "valorDiaria" : 200.0,
+    "isAlugado" : true
   },
-  "localRetirada" : "Rio de Janeiro",
-  "dataHoraRetirada" : [ 2023, 10, 2, 9, 0 ],
-  "dataHoraDevolucao" : [ 2023, 10, 6, 9, 0 ]
+  "localRetirada" : "Loja Centro",
+  "dataHoraRetirada" : [ 2025, 9, 1, 23, 19, 19, 479783361 ],
+  "dataHoraDevolucao" : null
 } ]
