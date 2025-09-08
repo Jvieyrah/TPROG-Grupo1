@@ -49,6 +49,45 @@ A aplicação foi projetada para cumprir as seguintes regras de negócio, garant
 
 * **RN1: Unicidade de Veículos**: Cada **veículo** é identificado de forma única pela sua **placa**. Não é possível cadastrar veículos com a mesma placa.
 
+---
+
+## Conceitos Aplicados: Facilidades e Desafios
+
+Durante o desenvolvimento do projeto, foram aplicados diversos conceitos de Programação Orientada a Objetos. Abaixo estão os conceitos que apresentaram maior facilidade e os que representaram maiores desafios na implementação:
+
+### Conceitos de Fácil Aplicação
+
+1. **Herança e Polimorfismo**
+   - A implementação da hierarquia de classes, com `Cliente` como classe abstrata e `PessoaFisica`/`PessoaJuridica` como classes concretas, foi relativamente direta.
+   - O uso de métodos abstratos como `getDocumento()` permitiu implementar comportamentos específicos para cada tipo de cliente de forma organizada.
+
+2. **Encapsulamento**
+   - A definição clara de atributos privados/protegidos e a utilização de getters e setters facilitaram o controle de acesso aos dados.
+   - A separação entre as camadas de modelo, repositório e serviço manteve o código organizado e coeso.
+
+3. **Tratamento de Exceções**
+   - A implementação de validações e tratamento de erros para os dados de entrada tornou o sistema mais robusto e previsível.
+
+### Conceitos que Apresentaram Desafios
+
+1. **Persistência de Dados com JSON**
+   - A implementação da serialização/desserialização de objetos para JSON, especialmente com herança, exigiu o uso de anotações específicas como `@JsonTypeInfo` e `@JsonSubTypes`.
+   - A manutenção da integridade dos dados entre as sessões da aplicação foi um desafio que exigiu atenção especial.
+
+2. **Gerenciamento de Estados**
+   - Controlar o estado dos veículos (disponível/alugado) e garantir a consistência dessas informações em diferentes partes do sistema foi mais complexo do que o inicialmente previsto.
+   - A implementação de regras de negócio que envolviam múltiplas entidades (como verificar disponibilidade de veículo antes do aluguel) exigiu um planejamento cuidadoso.
+
+3. **Design de Interfaces**
+   - A definição clara das interfaces de serviço e repositório exigiu várias iterações para encontrar o equilíbrio entre flexibilidade e simplicidade.
+   - A decisão sobre quais métodos deveriam estar em quais interfaces foi um processo que evoluiu ao longo do desenvolvimento.
+
+4. **Acoplamento entre Componentes**
+   - Manter um baixo acoplamento entre as classes de serviço e repositório, especialmente em operações que envolvem múltiplas entidades, foi um desafio constante.
+   - A injeção de dependências entre os serviços precisou ser cuidadosamente planejada para evitar dependências circulares.
+
+Estes desafios foram importantes para o aprendizado e resultaram em um código mais robusto e manutenível, demonstrando a importância de um bom design de software na resolução de problemas complexos.
+
 * **RN2: Tipos de Veículos**: A aplicação considera três tipos de veículos: **PEQUENO**, **MEDIO** e **SUV**.
 
 * **RN3: Registro de Aluguéis**: Todos os aluguéis e devoluções registram o **local, data e horário**.

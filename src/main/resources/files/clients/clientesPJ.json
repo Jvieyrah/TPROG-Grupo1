@@ -1,0 +1,21 @@
+[ {
+  "nome" : "Ciente Pessoa juridica de Teste 2",
+  "documento" : "12.345.678/0001-95",
+  "cnpj" : "12.345.678/0001-95"
+}, {
+  "nome" : "Ciente Pessoa juridica de Teste 3",
+  "documento" : "98.765.432/0001-10",
+  "cnpj" : "98.765.432/0001-10"
+}, {
+  "nome" : "Ciente Pessoa juridica de Teste 4",
+  "documento" : "11.222.333/0001-44",
+  "cnpj" : "11.222.333/0001-44"
+}, {
+  "nome" : "Ciente Pessoa juridica de Teste 5",
+  "documento" : "55.666.777/0001-88",
+  "cnpj" : "55.666.777/0001-88"
+}, {
+  "nome" : "Empresa Tabajara",
+  "documento" : "12.345.678/0001-00",
+  "cnpj" : "12.345.678/0001-00"
+} ]

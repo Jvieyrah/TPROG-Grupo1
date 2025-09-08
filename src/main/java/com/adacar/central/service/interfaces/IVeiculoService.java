@@ -1,10 +1,17 @@
 package com.adacar.central.service.interfaces;
 
-public interface IVeiculoService {
-  //        <<interface>>
-  //        + void cadastrar(Veiculo veiculo)
-  //        + void alterar(Veiculo veiculo)
-  //        + Veiculo buscarPorParteNome(String nome)
-  //        + List<Veiculo> listarDisponiveis()
+import com.adacar.central.model.Veiculo;
 
+import java.util.List;
+import java.util.Optional;
+
+public interface IVeiculoService {
+
+    String cadastrar(Veiculo veiculo);
+    String alterar(Veiculo veiculo);
+    Veiculo buscarPorPlaca(String placa);
+    Veiculo buscarPorParteNome(String nome);
+    Optional<List<Veiculo>> listarTodos();
+    String remover(String placa);
+    List<Veiculo> listarDisponiveis();
 }

@@ -1,0 +1,33 @@
+[ {
+  "cliente" : {
+    "nome" : "Ciente Pessoa Fisica de Teste 2",
+    "documento" : "123.456.789-01",
+    "cpf" : "123.456.789-01"
+  },
+  "veiculo" : {
+    "placa" : "ABC1234",
+    "nome" : "Carro A",
+    "tipo" : "PEQUENO",
+    "valorDiaria" : 100.0,
+    "status" : "DISPONIVEL"
+  },
+  "localRetirada" : "São Paulo",
+  "dataHoraRetirada" : [ 2023, 10, 1, 10, 0 ],
+  "dataHoraDevolucao" : [ 2023, 10, 5, 10, 0 ]
+}, {
+  "cliente" : {
+    "nome" : "João Vieira",
+    "documento" : "123.456.789-00",
+    "cpf" : "123.456.789-00"
+  },
+  "veiculo" : {
+    "placa" : "ABC-1234",
+    "nome" : "Tesla Model X",
+    "tipo" : "SUV",
+    "valorDiaria" : 200.0,
+    "status" : "DISPONIVEL"
+  },
+  "localRetirada" : "Loja Centro",
+  "dataHoraRetirada" : [ 2025, 9, 1, 23, 19, 19, 479783361 ],
+  "dataHoraDevolucao" : null
+} ]
