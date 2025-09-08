@@ -1,153 +1,306 @@
 package com.adacar.central;
 
+import com.adacar.central.enums.TipoVeiculo;
 import com.adacar.central.model.Aluguel;
+import com.adacar.central.model.Cliente;
+import com.adacar.central.model.PessoaFisica;
 import com.adacar.central.model.Veiculo;
 import com.adacar.central.repository.impl.AluguelRepository;
 import com.adacar.central.repository.impl.VeiculoRepository;
-import com.adacar.central.service.impl.ClienteService;
+import com.adacar.central.service.impl.*;
+import com.adacar.central.service.interfaces.IDesconto;
+import com.adacar.central.service.interfaces.IPagamento;
 
-import java.util.InputMismatchException;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
-/**
- * Main class for running the interactive command-line menu.
- * This class is the primary entry point for user interaction with the application.
- */
 public class MenuApplication {
 
+    private static final ClienteService clienteService = new ClienteService();
+    private static final VeiculoService veiculoService = new VeiculoService();
+
+    private static final List<Aluguel> alugueisAtivos = new ArrayList<>();
+
     public static void main(String[] args) {
-        // Instantiate services and repositories needed for the menu's operations.
-        ClienteService clienteService = new ClienteService();
-        VeiculoRepository veiculoRepository = new VeiculoRepository();
-        AluguelRepository aluguelRepository = new AluguelRepository();
-
         Scanner scanner = new Scanner(System.in);
-        int option = -1;
+        int option;
 
-        // The main loop continues until the user chooses option 0 to exit.
-        while (option != 0) {
-            System.out.println("\n============== MENU ADA CAR ==============");
-            System.out.println("--- GESTÃO DE CLIENTES ---");
-            System.out.println("1. Cadastrar Cliente");
-            System.out.println("2. Alterar Nome do Cliente");
-            System.out.println("3. Listar todos os Clientes");
-            System.out.println("4. Buscar Cliente por Documento");
-            System.out.println("5. Buscar Clientes por Nome");
-            System.out.println("--- GESTÃO DE VEÍCULOS E ALUGUÉIS ---");
-            System.out.println("6. Listar todos os Veículos");
-            System.out.println("7. Listar todos os Aluguéis");
-            System.out.println("0. Sair do Sistema");
-            System.out.println("========================================");
-            System.out.print("➡️  Escolha uma opção: ");
-
+        while (true) {
+            displayMenu();
             try {
-                option = scanner.nextInt();
-                // This nextLine() is crucial to consume the newline character left by nextInt(),
-                // preventing issues with subsequent nextLine() calls.
-                scanner.nextLine();
+                option = Integer.parseInt(scanner.nextLine());
 
                 switch (option) {
-                    case 1:
-                        System.out.println("\n--- Cadastrar Novo Cliente ---");
-                        System.out.print("Digite o nome: ");
-                        String nomeCadastro = scanner.nextLine();
-                        System.out.print("Digite o documento (CPF ou CNPJ): ");
-                        String docCadastro = scanner.nextLine();
-                        String resultadoCadastro = clienteService.cadastrar(nomeCadastro, docCadastro);
-                        System.out.println("✅ " + resultadoCadastro);
-                        break;
-
-                    case 2:
-                        System.out.println("\n--- Alterar Nome do Cliente ---");
-                        System.out.print("Digite o documento do cliente que deseja alterar: ");
-                        String docAlterar = scanner.nextLine();
-                        System.out.print("Digite o novo nome: ");
-                        String novoNome = scanner.nextLine();
-                        String resultadoAlteracao = clienteService.alterar(novoNome, docAlterar);
-                        System.out.println("🔄 " + resultadoAlteracao);
-                        break;
-
-                    case 3:
-                        System.out.println("\n--- Lista de Todos os Clientes ---");
-                        clienteService.listarTodos().ifPresentOrElse(
-                                listaClientes -> {
-                                    if (listaClientes.isEmpty()) {
-                                        System.out.println("ℹ️  Nenhum cliente cadastrado.");
-                                    } else {
-                                        listaClientes.forEach(System.out::println);
-                                    }
-                                },
-                                () -> System.out.println("❌ Erro ao listar clientes.")
-                        );
-                        break;
-
-                    case 4:
-                        System.out.println("\n--- Buscar Cliente por Documento ---");
-                        System.out.print("Digite o documento a ser buscado: ");
-                        String docBusca = scanner.nextLine();
-                        clienteService.buscarPorDocumento(docBusca).ifPresentOrElse(
-                                cliente -> System.out.println("✔️  Cliente encontrado: " + cliente),
-                                () -> System.out.println("❌ Cliente não encontrado.")
-                        );
-                        break;
-
-                    case 5:
-                        System.out.println("\n--- Buscar Cliente por Parte do Nome ---");
-                        System.out.print("Digite parte do nome a ser buscado: ");
-                        String nomeBusca = scanner.nextLine();
-                        System.out.println("\n--- Resultado da Busca ---");
-                        clienteService.buscarPorParteNome(nomeBusca).ifPresentOrElse(
-                                listaClientes -> {
-                                    if (listaClientes.isEmpty()) {
-                                        System.out.println("ℹ️  Nenhum cliente encontrado com o termo: " + nomeBusca);
-                                    } else {
-                                        listaClientes.forEach(System.out::println);
-                                    }
-                                },
-                                () -> System.out.println("❌ Erro ao buscar clientes.")
-                        );
-                        break;
-
-                    case 6:
-                        System.out.println("\n--- Lista de Todos os Veículos ---");
-                        List<Veiculo> todosVeiculos = veiculoRepository.findAll();
-                        if (todosVeiculos.isEmpty()) {
-                            System.out.println("ℹ️  Nenhum veículo cadastrado.");
-                        } else {
-                            todosVeiculos.forEach(System.out::println);
-                        }
-                        break;
-
-                    case 7:
-                        System.out.println("\n--- Lista de Todos os Aluguéis ---");
-                        List<Aluguel> todosAlugueis = aluguelRepository.findAll();
-                        if (todosAlugueis.isEmpty()) {
-                            System.out.println("ℹ️  Nenhum aluguel registrado.");
-                        } else {
-                            todosAlugueis.forEach(System.out::println);
-                        }
-                        break;
-
-                    case 0:
-                        System.out.println("\n👋 Saindo do sistema... Até logo!");
-                        break;
-
-                    default:
-                        System.out.println("⚠️ Opção inválida. Por favor, tente novamente.");
-                        break;
+                    case 1 -> cadastrarCliente(scanner);
+                    case 2 -> alterarCliente(scanner);
+                    case 3 -> buscarClientePorDocumento(scanner);
+                    case 4 -> listarTodosClientes();
+                    case 5 -> removerCliente(scanner); // New
+                    case 6 -> cadastrarVeiculo(scanner); // Renumbered
+                    case 7 -> alterarVeiculo(scanner); // Renumbered
+                    case 8 -> buscarVeiculoPorPlaca(scanner); // Renumbered
+                    case 9 -> listarVeiculosDisponiveis(); // Renumbered
+                    case 10 -> removerVeiculo(scanner); // New
+                    case 11 -> alugarVeiculo(scanner); // Renumbered
+                    case 12 -> devolverVeiculo(scanner); // Renumbered
+                    case 0 -> {
+                        System.out.println("Encerrando o sistema. Até logo! 👋");
+                        scanner.close();
+                        return;
+                    }
+                    default -> System.out.println("Opção inválida! Por favor, tente novamente.");
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("❌ Erro: Por favor, digite um número válido para a opção.");
-                scanner.nextLine(); // Clears the invalid input from the scanner.
-                option = -1; // Resets option to ensure the loop continues.
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Por favor, digite um número válido.");
             } catch (Exception e) {
-                System.out.println("🚨 Ocorreu um erro inesperado: " + e.getMessage());
+                System.err.println("Ocorreu um erro inesperado: " + e.getMessage());
                 e.printStackTrace();
             }
+
+            System.out.println("\nPressione Enter para continuar...");
+            scanner.nextLine();
+        }
+    }
+
+    private static void displayMenu() {
+        System.out.println("\n--- ADA CAR RENTAL SYSTEM ---");
+        System.out.println("======= GESTÃO DE CLIENTES =======");
+        System.out.println("1. Cadastrar Cliente");
+        System.out.println("2. Alterar Cliente");
+        System.out.println("3. Buscar Cliente por Documento");
+        System.out.println("4. Listar Todos os Clientes");
+        System.out.println("5. Remover Cliente"); // New
+        System.out.println("======== GESTÃO DE VEÍCULOS ========");
+        System.out.println("6. Cadastrar Veículo"); // Renumbered
+        System.out.println("7. Alterar Veículo"); // Renumbered
+        System.out.println("8. Buscar Veículo por Placa"); // Renumbered
+        System.out.println("9. Listar Veículos Disponíveis"); // Renumbered
+        System.out.println("10. Remover Veículo"); // New
+        System.out.println("=========== OPERAÇÕES ===========");
+        System.out.println("11. Alugar Veículo"); // Renumbered
+        System.out.println("12. Devolver Veículo"); // Renumbered
+        System.out.println("=================================");
+        System.out.println("0. Sair");
+        System.out.print("Escolha uma opção: ");
+    }
+
+    private static void cadastrarCliente(Scanner scanner) throws IOException {
+        System.out.print("Digite o nome do cliente: ");
+        String nome = scanner.nextLine();
+        System.out.print("Digite o documento (CPF ou CNPJ): ");
+        String documento = scanner.nextLine();
+        String resultado = clienteService.cadastrar(nome, documento);
+        System.out.println(resultado);
+    }
+
+    private static void alterarCliente(Scanner scanner) {
+        System.out.print("Digite o documento do cliente que deseja alterar: ");
+        String documento = scanner.nextLine();
+        System.out.print("Digite o NOVO nome do cliente: ");
+        String nome = scanner.nextLine();
+        String resultado = clienteService.alterar(nome, documento);
+        System.out.println(resultado);
+    }
+
+    private static void buscarClientePorDocumento(Scanner scanner) {
+        System.out.print("Digite o documento do cliente: ");
+        String documento = scanner.nextLine();
+        clienteService.buscarPorDocumento(documento)
+                .ifPresentOrElse(
+                        cliente -> System.out.println("Cliente encontrado: " + cliente),
+                        () -> System.out.println("Cliente não encontrado.")
+                );
+    }
+
+    private static void listarTodosClientes() {
+        System.out.println("\n--- LISTA DE TODOS OS CLIENTES ---");
+        Optional<List<Cliente>> clientesOpt = clienteService.listarTodos();
+        if (clientesOpt.isPresent() && !clientesOpt.get().isEmpty()) {
+            clientesOpt.get().forEach(System.out::println);
+        } else {
+            System.out.println("Nenhum cliente cadastrado.");
+        }
+    }
+
+    // NEW METHOD
+    private static void removerCliente(Scanner scanner) {
+        System.out.print("Digite o documento do cliente que deseja remover: ");
+        String documento = scanner.nextLine();
+
+        // Business Rule: Check if the client has an active rental in this session.
+        boolean temAluguelAtivo = alugueisAtivos.stream()
+                .anyMatch(aluguel -> aluguel.getCliente().getDocumento().equals(documento));
+
+        if (temAluguelAtivo) {
+            System.out.println("Erro: Cliente não pode ser removido pois possui um aluguel em andamento.");
+            return;
         }
 
-        // Close the scanner to release system resources.
-        scanner.close();
+        // As noted, the 'remover' method is missing from ClienteService.
+        // This menu option is a placeholder for when that functionality is added.
+        System.out.println("Atenção: A funcionalidade de remover cliente não foi implementada na camada de serviço (ClienteService).");
+        // Example of how it would be called:
+        // String resultado = clienteService.removerPorDocumento(documento);
+        // System.out.println(resultado);
+    }
+
+    private static void cadastrarVeiculo(Scanner scanner) {
+        try {
+            System.out.print("Digite a placa do veículo (ex: ABC1D23): ");
+            String placa = scanner.nextLine();
+            System.out.print("Digite o nome/modelo do veículo (ex: Fiat Mobi): ");
+            String nome = scanner.nextLine();
+            System.out.print("Digite o tipo do veículo (PEQUENO, MEDIO, SUV): ");
+            TipoVeiculo tipo = TipoVeiculo.valueOf(scanner.nextLine().toUpperCase());
+
+            Veiculo veiculo = new Veiculo(placa, nome, tipo);
+            String resultado = veiculoService.cadastrar(veiculo);
+            System.out.println(resultado);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: Tipo de veículo inválido. Use PEQUENO, MEDIO ou SUV.");
+        }
+    }
+
+    private static void alterarVeiculo(Scanner scanner) {
+        System.out.print("Digite a placa do veículo que deseja alterar: ");
+        String placa = scanner.nextLine();
+
+        Veiculo veiculo = veiculoService.buscarPorPlaca(placa);
+        if (veiculo == null) {
+            System.out.println("Veículo não encontrado.");
+            return;
+        }
+
+        try {
+            System.out.print("Digite o NOVO nome/modelo do veículo: ");
+            String novoNome = scanner.nextLine();
+            System.out.print("Digite o NOVO tipo do veículo (PEQUENO, MEDIO, SUV): ");
+            TipoVeiculo novoTipo = TipoVeiculo.valueOf(scanner.nextLine().toUpperCase());
+
+            veiculo.setNome(novoNome);
+            veiculo.setTipo(novoTipo);
+
+            String resultado = veiculoService.alterar(veiculo);
+            System.out.println(resultado);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: Tipo de veículo inválido. Use PEQUENO, MEDIO ou SUV.");
+        }
+    }
+
+    private static void buscarVeiculoPorPlaca(Scanner scanner) {
+        System.out.print("Digite a placa do veículo: ");
+        String placa = scanner.nextLine();
+        Veiculo veiculo = veiculoService.buscarPorPlaca(placa);
+        if (veiculo != null) {
+            System.out.println("Veículo encontrado: " + veiculo);
+        } else {
+            System.out.println("Veículo não encontrado.");
+        }
+    }
+
+    private static void listarVeiculosDisponiveis() {
+        System.out.println("\n--- VEÍCULOS DISPONÍVEIS PARA ALUGUEL ---");
+        List<Veiculo> disponiveis = veiculoService.listarDisponiveis();
+        if (disponiveis.isEmpty()) {
+            System.out.println("Nenhum veículo disponível no momento.");
+        } else {
+            disponiveis.forEach(System.out::println);
+        }
+    }
+
+    // NEW METHOD
+    private static void removerVeiculo(Scanner scanner) {
+        System.out.print("Digite a placa do veículo que deseja remover: ");
+        String placa = scanner.nextLine();
+
+        // Business Rule: Check if the vehicle has an active rental in this session.
+        boolean temAluguelAtivo = alugueisAtivos.stream()
+                .anyMatch(aluguel -> aluguel.getVeiculo().getPlaca().equalsIgnoreCase(placa));
+
+        if(temAluguelAtivo) {
+            System.out.println("Erro: Veículo não pode ser removido pois está atualmente alugado.");
+            return;
+        }
+
+        String resultado = veiculoService.remover(placa);
+        if("ok".equalsIgnoreCase(resultado)) {
+            System.out.println("Veículo removido com sucesso!");
+        } else {
+            System.out.println("Erro ao remover veículo: " + resultado);
+        }
+    }
+
+    private static void alugarVeiculo(Scanner scanner) throws IOException {
+        System.out.print("Digite o documento do cliente: ");
+        String docCliente = scanner.nextLine();
+        Optional<Cliente> clienteOpt = clienteService.buscarPorDocumento(docCliente);
+
+        if (clienteOpt.isEmpty()) {
+            System.out.println("Cliente não encontrado. Cadastre o cliente primeiro.");
+            return;
+        }
+
+        listarVeiculosDisponiveis();
+        System.out.print("\nDigite a placa do veículo a ser alugado: ");
+        String placaVeiculo = scanner.nextLine();
+        Veiculo veiculo = veiculoService.buscarPorPlaca(placaVeiculo);
+
+        if (veiculo == null || !veiculo.podeSerAlugado()) {
+            System.out.println("Veículo não encontrado ou não está disponível.");
+            return;
+        }
+
+        System.out.print("Digite o local de retirada: ");
+        String localRetirada = scanner.nextLine();
+
+        IDesconto desconto = (clienteOpt.get() instanceof PessoaFisica)
+                ? new DescontoPessoaFisica()
+                : new DescontoPessoaJuridica();
+        IPagamento pagamentoService = new PagamentoService(desconto);
+
+        AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
+
+        Aluguel novoAluguel = aluguelService.alugar(clienteOpt.get(), veiculo, localRetirada, LocalDateTime.now());
+        alugueisAtivos.add(novoAluguel);
+
+        System.out.println("\n✅ Veículo alugado com sucesso!");
+    }
+
+    private static void devolverVeiculo(Scanner scanner) throws IOException {
+        System.out.print("Digite a placa do veículo a ser devolvido: ");
+        String placa = scanner.nextLine();
+
+        Optional<Aluguel> aluguelOpt = alugueisAtivos.stream()
+                .filter(a -> a.getVeiculo().getPlaca().equalsIgnoreCase(placa))
+                .findFirst();
+
+        if (aluguelOpt.isEmpty()) {
+            System.out.println("Nenhum aluguel ativo encontrado para esta placa nesta sessão.");
+            return;
+        }
+
+        Aluguel aluguelParaDevolver = aluguelOpt.get();
+        System.out.print("Digite o local de devolução: ");
+        String localDevolucao = scanner.nextLine();
+
+        IDesconto desconto = (aluguelParaDevolver.getCliente() instanceof PessoaFisica)
+                ? new DescontoPessoaFisica()
+                : new DescontoPessoaJuridica();
+        IPagamento pagamentoService = new PagamentoService(desconto);
+        AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
+
+        LocalDateTime dataDevolucao = LocalDateTime.now().plusDays(1);
+
+        aluguelService.devolver(aluguelParaDevolver, localDevolucao, dataDevolucao);
+        double valorTotal = pagamentoService.calcularValorTotal(aluguelParaDevolver);
+
+        alugueisAtivos.remove(aluguelParaDevolver);
+
+        System.out.println("\n✅ Veículo devolvido com sucesso!");
+        System.out.printf("Valor total a pagar: R$ %.2f\n", valorTotal);
     }
 }

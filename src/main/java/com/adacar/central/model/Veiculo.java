@@ -6,6 +6,8 @@ import com.adacar.central.enums.TipoVeiculo;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
+import java.util.Objects;
+
 public class Veiculo {
     private String placa;
     private String nome;
@@ -14,6 +16,23 @@ public class Veiculo {
     @JsonAlias({"status"})
     private StatusVeiculo statusVeiculo;
 
+
+    public Veiculo() {
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Veiculo veiculo = (Veiculo) o;
+        return Objects.equals(getPlaca(), veiculo.getPlaca());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getPlaca());
+    }
 
     public Veiculo(String abc1234, String ford, String ka, TipoVeiculo pequeno) {
     }
