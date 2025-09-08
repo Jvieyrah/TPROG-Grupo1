@@ -39,14 +39,13 @@ public class MenuApplication {
                     case 2 -> alterarCliente(scanner);
                     case 3 -> buscarClientePorDocumento(scanner);
                     case 4 -> listarTodosClientes();
-                    case 5 -> removerCliente(scanner); // New
-                    case 6 -> cadastrarVeiculo(scanner); // Renumbered
-                    case 7 -> alterarVeiculo(scanner); // Renumbered
-                    case 8 -> buscarVeiculoPorPlaca(scanner); // Renumbered
-                    case 9 -> listarVeiculosDisponiveis(); // Renumbered
-                    case 10 -> removerVeiculo(scanner); // New
-                    case 11 -> alugarVeiculo(scanner); // Renumbered
-                    case 12 -> devolverVeiculo(scanner); // Renumbered
+                    case 5 -> cadastrarVeiculo(scanner);
+                    case 6 -> alterarVeiculo(scanner);
+                    case 7 -> buscarVeiculoPorPlaca(scanner);
+                    case 8 -> listarVeiculosDisponiveis();
+                    case 9 -> removerVeiculo(scanner);
+                    case 10 -> alugarVeiculo(scanner);
+                    case 11 -> devolverVeiculo(scanner);
                     case 0 -> {
                         System.out.println("Encerrando o sistema. Até logo! 👋");
                         scanner.close();
@@ -73,16 +72,15 @@ public class MenuApplication {
         System.out.println("2. Alterar Cliente");
         System.out.println("3. Buscar Cliente por Documento");
         System.out.println("4. Listar Todos os Clientes");
-        System.out.println("5. Remover Cliente"); // New
         System.out.println("======== GESTÃO DE VEÍCULOS ========");
-        System.out.println("6. Cadastrar Veículo"); // Renumbered
-        System.out.println("7. Alterar Veículo"); // Renumbered
-        System.out.println("8. Buscar Veículo por Placa"); // Renumbered
-        System.out.println("9. Listar Veículos Disponíveis"); // Renumbered
-        System.out.println("10. Remover Veículo"); // New
+        System.out.println("5. Cadastrar Veículo");
+        System.out.println("6. Alterar Veículo");
+        System.out.println("7. Buscar Veículo por Placa");
+        System.out.println("8. Listar Veículos Disponíveis");
+        System.out.println("9. Remover Veículo");
         System.out.println("=========== OPERAÇÕES ===========");
-        System.out.println("11. Alugar Veículo"); // Renumbered
-        System.out.println("12. Devolver Veículo"); // Renumbered
+        System.out.println("10. Alugar Veículo");
+        System.out.println("11. Devolver Veículo");
         System.out.println("=================================");
         System.out.println("0. Sair");
         System.out.print("Escolha uma opção: ");
@@ -126,27 +124,6 @@ public class MenuApplication {
         }
     }
 
-    // NEW METHOD
-    private static void removerCliente(Scanner scanner) {
-        System.out.print("Digite o documento do cliente que deseja remover: ");
-        String documento = scanner.nextLine();
-
-        // Business Rule: Check if the client has an active rental in this session.
-        boolean temAluguelAtivo = alugueisAtivos.stream()
-                .anyMatch(aluguel -> aluguel.getCliente().getDocumento().equals(documento));
-
-        if (temAluguelAtivo) {
-            System.out.println("Erro: Cliente não pode ser removido pois possui um aluguel em andamento.");
-            return;
-        }
-
-        // As noted, the 'remover' method is missing from ClienteService.
-        // This menu option is a placeholder for when that functionality is added.
-        System.out.println("Atenção: A funcionalidade de remover cliente não foi implementada na camada de serviço (ClienteService).");
-        // Example of how it would be called:
-        // String resultado = clienteService.removerPorDocumento(documento);
-        // System.out.println(resultado);
-    }
 
     private static void cadastrarVeiculo(Scanner scanner) {
         try {
@@ -212,12 +189,10 @@ public class MenuApplication {
         }
     }
 
-    // NEW METHOD
     private static void removerVeiculo(Scanner scanner) {
         System.out.print("Digite a placa do veículo que deseja remover: ");
         String placa = scanner.nextLine();
 
-        // Business Rule: Check if the vehicle has an active rental in this session.
         boolean temAluguelAtivo = alugueisAtivos.stream()
                 .anyMatch(aluguel -> aluguel.getVeiculo().getPlaca().equalsIgnoreCase(placa));
 

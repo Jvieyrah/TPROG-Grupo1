@@ -16,10 +16,4 @@
   "tipo" : "SUV",
   "valorDiaria" : 200.0,
   "status" : "DISPONIVEL"
-},{
-  "placa" : "ABC-1234",
-  "nome" : "Tesla Model X",
-  "tipo" : "SUV",
-  "valorDiaria" : 200.0,
-  "status" : "DISPONIVEL"
-} ]
+}]
