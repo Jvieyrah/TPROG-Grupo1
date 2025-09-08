@@ -2,6 +2,7 @@ package com.adacar.central.repository.impl;
 
 import com.adacar.central.application.Impl.JsonDataReader;
 import com.adacar.central.application.Impl.JsonDataWriter;
+import com.adacar.central.enums.StatusVeiculo;
 import com.adacar.central.model.Veiculo;
 import com.adacar.central.repository.interfaces.IRepository;
 import java.io.File;
@@ -26,6 +27,14 @@ public class VeiculoRepository implements IRepository<Veiculo> {
         .filter(veiculo -> veiculo.getPlaca().equals(id))
         .findFirst()
         .orElseThrow(() -> new RuntimeException("Veículo com placa " + id + " não encontrado."));
+  }
+
+  public Veiculo findByPartialName(String partialName) throws IOException {
+    return findAll().stream()
+            .filter(veiculo -> veiculo.getNome().toLowerCase().contains(partialName.toLowerCase())
+                    && veiculo.getStatus() == StatusVeiculo.DISPONIVEL)
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Nenhum veículo encontrado com o nome contendo: " + partialName));
   }
 
   @Override
