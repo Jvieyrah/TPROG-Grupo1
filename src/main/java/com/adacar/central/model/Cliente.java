@@ -33,6 +33,7 @@ public abstract class Cliente {
 
     public abstract String getDocumento();
 
+
     @Override
     public String toString() {
         return "Cliente{" +

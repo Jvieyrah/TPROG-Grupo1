@@ -135,6 +135,7 @@ class ClienteServiceTest {
     verify(pessoaJuridicaRepository, never()).update(any());
   }
 
+
   // --- Testes para o método LISTAR TODOS ---
 
   @Test
