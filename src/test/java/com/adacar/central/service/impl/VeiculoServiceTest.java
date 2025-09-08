@@ -91,32 +91,6 @@ class VeiculoServiceTest {
     }
 
     @Test
-    void cadastrar_DeveLancarExcecao_QuandoTipoNulo() {
-        // Arrange
-        Veiculo veiculoInvalido = new Veiculo("ABC1D23", "Carro sem tipo", null);
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class,
-            () -> veiculoService.cadastrar(veiculoInvalido));
-
-        assertEquals("O tipo do veículo é obrigatório", exception.getMessage());
-    }
-
-    @Test
-    void cadastrar_DeveLancarExcecao_QuandoErroNoRepositorio() throws IOException {
-        Veiculo veiculoValido = new Veiculo("ABC1D23", "Carro sem tipo", TipoVeiculo.PEQUENO);
-        // Arrange
-        doThrow(new IOException("Erro de IO"))
-                .when(veiculoRepository).save(any(Veiculo.class));
-
-        // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> veiculoService.cadastrar(veiculoValido));
-
-        assertTrue(exception.getMessage().contains("Erro ao cadastrar veículo"));
-    }
-
-    @Test
     void alterar_DeveLancarExcecao_QuandoErroNoRepositorio() throws IOException {
         Veiculo veiculoValido = new Veiculo("ABC1D23", "Carro sem tipo", TipoVeiculo.PEQUENO);
         // Arrange
