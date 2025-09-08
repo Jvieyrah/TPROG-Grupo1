@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class VeiculoService implements IVeiculoService {
 
-    private final VeiculoRepository veiculoRepository;
+    private VeiculoRepository veiculoRepository;
     
     // Regex para validar placa no formato brasileiro (AAA-0000 ou AAA0A00)
     private static final String PLACA_PATTERN = "^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$";
@@ -138,5 +138,9 @@ public class VeiculoService implements IVeiculoService {
         if (!pattern.matcher(placaFormatada).matches()) {
             throw new RuntimeException("Formato de placa inválido. Use o formato AAA-0000 ou AAA0A00");
         }
+    }
+
+    public void setVeiculoRepository(VeiculoRepository veiculoRepository) {
+        this.veiculoRepository = veiculoRepository;
     }
 }
