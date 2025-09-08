@@ -55,9 +55,13 @@ for (PessoaFisica pessoaFisica : pessoasFisicas){
   public void update(PessoaFisica entity) throws IOException {
      try {
         PessoaFisica pessoasFisicaJson = findById(entity.getDocumento());
+        //acha emeu documento
         List<PessoaFisica> pessoasFisicas = new ArrayList<>(findAll());
+        //lista existente
         pessoasFisicas.remove(pessoasFisicaJson);
+        //remove o antigo
         pessoasFisicas.add(entity);
+        //adiciona o novo
         jsonDataWriter.writeList(file, pessoasFisicas);
       } catch (IOException e) {
         throw new RuntimeException("Erro ao atualizar Pessoa Física: " + e.getMessage(), e);
