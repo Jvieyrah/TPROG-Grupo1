@@ -1,17 +1,13 @@
 package com.adacar.central.service.impl;
 
 import com.adacar.central.model.Aluguel;
-import com.adacar.central.model.PessoaFisica;
-import com.adacar.central.model.PessoaJuridica;
-import com.adacar.central.service.interfaces.IDesconto;
 import com.adacar.central.service.interfaces.IPagamento;
 import java.time.Duration;
+import java.util.function.Function; // Importar
 
 public class PagamentoService implements IPagamento {
-    private final IDesconto desconto;
 
-    public PagamentoService(IDesconto desconto) {
-        this.desconto = desconto;
+    public PagamentoService() {
     }
 
     private long calcularDiarias(Aluguel aluguel) {
@@ -20,17 +16,17 @@ public class PagamentoService implements IPagamento {
         }
         Duration duracao = Duration.between(aluguel.getDataHoraRetirada(), aluguel.getDataHoraDevolucao());
         long horas = duracao.toHours();
+        // Garante que qualquer fração de dia seja contada como uma diária completa
         return (horas / 24) + (horas % 24 > 0 ? 1 : 0);
     }
 
     @Override
-    public double calcularValorTotal(Aluguel aluguel) {
+    public double calcularValorTotal(Aluguel aluguel, Function<Integer, Double> politicaDesconto) {
         long diarias = calcularDiarias(aluguel);
         double valorBase = aluguel.getVeiculo().getValorDiaria() * diarias;
-        double valorDesconto = 0.0;
 
-        valorDesconto = this.desconto.calcular((int) diarias);
+        double percentualDesconto = politicaDesconto.apply((int) diarias);
 
-        return valorBase - (valorBase * valorDesconto);
+        return valorBase - (valorBase * percentualDesconto);
     }
 }

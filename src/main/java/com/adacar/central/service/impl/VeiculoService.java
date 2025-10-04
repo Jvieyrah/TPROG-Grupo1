@@ -9,19 +9,52 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function; // NOVO: Import necessário
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class VeiculoService implements IVeiculoService {
 
     private VeiculoRepository veiculoRepository;
-    
-    // Regex para validar placa no formato brasileiro (AAA-0000 ou AAA0A00)
+
     private static final String PLACA_PATTERN = "^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$";
     private static final Pattern pattern = Pattern.compile(PLACA_PATTERN);
 
+    // NOVO: FUNCTIONS PARA AS POLITICAS DE DESCONTO
+    public static final Function<Integer, Double> POLITICA_DESCONTO_PF = diarias -> {
+        if (diarias > 5) {
+            return 0.05; // 5%
+        }
+        return 0.0;
+    };
+
+    //Função que representa a política de desconto para Pessoa Jurídica.
+    public static final Function<Integer, Double> POLITICA_DESCONTO_PJ = diarias -> {
+        if (diarias > 3) {
+            return 0.10; // 10%
+        }
+        return 0.0;
+    };
+
     public VeiculoService() {
         this.veiculoRepository = new VeiculoRepository();
+    }
+
+
+    //NOVO: METODO PARA CALCULO DE ALUGUEL USANDO FUNCTION
+
+    public double calcularValorTotalAluguel(Veiculo veiculo, int diarias, Function<Integer, Double> politicaDesconto) {
+        if (veiculo == null || diarias <= 0) {
+            return 0.0;
+        }
+
+        double valorBase = veiculo.getValorDiaria() * diarias;
+
+        double percentualDesconto = politicaDesconto.apply(diarias);
+
+        double valorDoDesconto = valorBase * percentualDesconto;
+
+        return valorBase - valorDoDesconto;
     }
 
     @Override
@@ -105,36 +138,33 @@ public class VeiculoService implements IVeiculoService {
             throw new RuntimeException("Erro ao listar veículos: " + e.getMessage(), e);
         }
     }
-    
+
     private void validarVeiculo(Veiculo veiculo) {
         if (veiculo == null) {
             throw new RuntimeException("O veículo não pode ser nulo");
         }
-        
+
         if (veiculo.getPlaca() == null || veiculo.getPlaca().trim().isEmpty()) {
             throw new RuntimeException("A placa do veículo é obrigatória");
         }
-        
+
         validarPlaca(veiculo.getPlaca());
-        
+
         if (veiculo.getNome() == null || veiculo.getNome().trim().isEmpty()) {
             throw new RuntimeException("O nome do veículo é obrigatório");
         }
-        
+
         if (veiculo.getTipo() == null) {
             throw new RuntimeException("O tipo do veículo é obrigatório");
         }
-        
+
         if (veiculo.getValorDiaria() <= 0) {
             throw new RuntimeException("O valor da diária deve ser maior que zero");
         }
     }
-    
+
     private void validarPlaca(String placa) {
-        // Remove espaços em branco e converte para maiúsculas
         String placaFormatada = placa.trim().toUpperCase();
-        
-        // Verifica se a placa está no formato correto
         if (!pattern.matcher(placaFormatada).matches()) {
             throw new RuntimeException("Formato de placa inválido. Use o formato AAA-0000 ou AAA0A00");
         }
