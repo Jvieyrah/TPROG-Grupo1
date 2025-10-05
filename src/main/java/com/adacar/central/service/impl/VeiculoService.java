@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -75,6 +76,22 @@ public class VeiculoService implements IVeiculoService {
     public Optional<List<Veiculo>> listarTodos() {
         try {
             return Optional.of(veiculoRepository.findAll());
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<List<Veiculo>> listarTodosDisponiveisPaginacao(int skip, int limit){
+        Predicate<Veiculo> isDisponivel = veiculo -> veiculo.getStatus().equals(StatusVeiculo.DISPONIVEL);
+        try {
+            Optional<List<Veiculo>> veiculos = veiculoRepository.findAll()
+                    .stream()
+                    .filter(isDisponivel)
+                    .skip(skip)
+                    .limit(limit)
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), Optional::of));
+            return veiculos;
         } catch (IOException e) {
             return Optional.empty();
         }

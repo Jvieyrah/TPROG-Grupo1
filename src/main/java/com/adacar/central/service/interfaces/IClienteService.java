@@ -12,6 +12,8 @@ public interface IClienteService {
 
   Optional<List<Cliente>> listarTodos();
 
+  Optional<List<Cliente>> listarTodosComPaginacao(int skip, int limit);
+
   Optional<Cliente> buscarPorDocumento(String documento);
 
   Optional<List<Cliente>> buscarPorParteNome(String nome);
