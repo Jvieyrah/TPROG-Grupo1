@@ -38,11 +38,16 @@ public class PessoaJuridicaRepository implements IRepository<PessoaJuridica> {
   public void save(PessoaJuridica entity) throws IOException {
     try {
       List<PessoaJuridica> pessoasJuridicas = new ArrayList<>(findAll());
-      for (PessoaJuridica pessoaJuridica : pessoasJuridicas) {
-        if (pessoaJuridica.getDocumento().equals(entity.getDocumento())) {
-          throw new RuntimeException("Pessoa Jurídica com documento " + entity.getDocumento() + " já existe.");
-        }
+      
+      // Verifica se já existe uma pessoa jurídica com o mesmo documento usando Stream
+      boolean documentoExistente = pessoasJuridicas.stream()
+          .map(PessoaJuridica::getDocumento)
+          .anyMatch(doc -> doc.equals(entity.getDocumento()));
+          
+      if (documentoExistente) {
+        throw new RuntimeException("Pessoa Jurídica com documento " + entity.getDocumento() + " já existe.");
       }
+      
       pessoasJuridicas.add(entity);
       jsonDataWriter.writeList(file, pessoasJuridicas);
     } catch (IOException e) {
@@ -53,23 +58,45 @@ public class PessoaJuridicaRepository implements IRepository<PessoaJuridica> {
   @Override
   public void update(PessoaJuridica entity) throws IOException {
     try {
-      PessoaJuridica PessoaJuridicaJson = findById(entity.getDocumento());
-      List<PessoaJuridica> PessoaJuridica = new ArrayList<>(findAll());
-      PessoaJuridica.remove(PessoaJuridicaJson);
-      PessoaJuridica.add(entity);
-      jsonDataWriter.writeList(file, PessoaJuridica);
+      List<PessoaJuridica> pessoasJuridicas = new ArrayList<>(findAll());
+      
+      // Encontra o índice da pessoa jurídica a ser atualizada usando Stream
+      int index = -1;
+      for (int i = 0; i < pessoasJuridicas.size(); i++) {
+          if (pessoasJuridicas.get(i).getDocumento().equals(entity.getDocumento())) {
+              index = i;
+              break;
+          }
+      }
+      
+      if (index == -1) {
+          throw new RuntimeException("Pessoa Jurídica com documento " + entity.getDocumento() + " não encontrada para atualização.");
+      }
+      
+      // Atualiza a pessoa jurídica na posição encontrada
+      pessoasJuridicas.set(index, entity);
+      jsonDataWriter.writeList(file, pessoasJuridicas);
     } catch (IOException e) {
-      throw new RuntimeException("Erro ao atualizar Pessoa Física: " + e.getMessage(), e);
+      throw new RuntimeException("Erro ao atualizar Pessoa Jurídica: " + e.getMessage(), e);
     }
   }
 
   @Override
-  public void delete(String id)  throws IOException {
+  public void delete(String id) throws IOException {
     try {
-      PessoaJuridica pessoaJuridicaJson = findById(id);
       List<PessoaJuridica> pessoasJuridicas = new ArrayList<>(findAll());
-      pessoasJuridicas.remove(pessoaJuridicaJson);
-      jsonDataWriter.writeList(file, pessoasJuridicas);
+      
+      // Remove a pessoa jurídica usando Stream e filter
+      List<PessoaJuridica> pessoasAtualizadas = pessoasJuridicas.stream()
+          .filter(p -> !p.getDocumento().equals(id))
+          .collect(java.util.stream.Collectors.toList());
+      
+      // Verifica se algum item foi removido
+      if (pessoasAtualizadas.size() == pessoasJuridicas.size()) {
+        throw new RuntimeException("Pessoa Jurídica com documento " + id + " não encontrada para exclusão.");
+      }
+      
+      jsonDataWriter.writeList(file, pessoasAtualizadas);
     } catch (IOException e) {
       throw new RuntimeException("Erro ao deletar Pessoa Jurídica: " + e.getMessage(), e);
     }
