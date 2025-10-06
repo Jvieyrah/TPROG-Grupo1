@@ -46,11 +46,16 @@ public class VeiculoRepository implements IRepository<Veiculo> {
   public void save(Veiculo entity) throws IOException {
     try {
       List<Veiculo> veiculos = new ArrayList<>(findAll());
-      for (Veiculo veiculo : veiculos) {
-        if (veiculo.getPlaca().equals(entity.getPlaca())) {
-          throw new RuntimeException("Veículo com placa " + entity.getPlaca() + " já existe.");
-        }
+      
+      // Verifica se já existe um veículo com a mesma placa usando Stream
+      boolean placaExistente = veiculos.stream()
+          .map(Veiculo::getPlaca)
+          .anyMatch(placa -> placa.equals(entity.getPlaca()));
+          
+      if (placaExistente) {
+        throw new RuntimeException("Veículo com placa " + entity.getPlaca() + " já existe.");
       }
+      
       veiculos.add(entity);
       jsonDataWriter.writeList(file, veiculos);
     } catch (IOException e) {
@@ -61,10 +66,23 @@ public class VeiculoRepository implements IRepository<Veiculo> {
   @Override
   public void update(Veiculo entity) throws IOException {
     try {
-      Veiculo veiculoJson = findById(entity.getPlaca());
       List<Veiculo> veiculos = new ArrayList<>(findAll());
-      veiculos.remove(veiculoJson);
-      veiculos.add(entity);
+      
+      // Encontra o índice do veículo a ser atualizado usando Stream
+      int index = -1;
+      for (int i = 0; i < veiculos.size(); i++) {
+          if (veiculos.get(i).getPlaca().equals(entity.getPlaca())) {
+              index = i;
+              break;
+          }
+      }
+      
+      if (index == -1) {
+          throw new RuntimeException("Veículo com placa " + entity.getPlaca() + " não encontrado para atualização.");
+      }
+      
+      // Atualiza o veículo na posição encontrada
+      veiculos.set(index, entity);
       jsonDataWriter.writeList(file, veiculos);
     } catch (IOException e) {
       throw new RuntimeException("Erro ao atualizar Veículo: " + e.getMessage(), e);
@@ -74,10 +92,19 @@ public class VeiculoRepository implements IRepository<Veiculo> {
   @Override
   public void delete(String id) throws IOException {
     try {
-      Veiculo veiculoJson = findById(id);
-      List<Veiculo> veiculos =  new ArrayList<>(findAll());
-      veiculos.remove(veiculoJson);
-      jsonDataWriter.writeList(file, veiculos);
+      List<Veiculo> veiculos = new ArrayList<>(findAll());
+      
+      // Remove o veículo usando Stream e filter
+      List<Veiculo> veiculosAtualizados = veiculos.stream()
+          .filter(v -> !v.getPlaca().equals(id))
+          .collect(java.util.stream.Collectors.toList());
+      
+      // Verifica se algum item foi removido
+      if (veiculosAtualizados.size() == veiculos.size()) {
+        throw new RuntimeException("Veículo com placa " + id + " não encontrado para exclusão.");
+      }
+      
+      jsonDataWriter.writeList(file, veiculosAtualizados);
     } catch (IOException e) {
       throw new RuntimeException("Erro ao deletar Veículo: " + e.getMessage(), e);
     }

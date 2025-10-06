@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class AluguelRepository implements IRepository<Aluguel> {
   private JsonDataWriter<Aluguel> jsonDataWriter = new JsonDataWriter<>();
@@ -38,13 +39,17 @@ public class AluguelRepository implements IRepository<Aluguel> {
   public void save(Aluguel entity) throws IOException {
     try {
       List<Aluguel> alugueis = new ArrayList<>(findAll());
-      for (Aluguel aluguel : alugueis) {
-        if (aluguel.getCliente().getDocumento().equals(entity.getCliente().getDocumento())
-            && aluguel.getVeiculo().getPlaca().equals(entity.getVeiculo().getPlaca())) {
-          throw new RuntimeException("Aluguel cujo o cliente com documento " + entity.getCliente().getDocumento()
-              + " e placa " + entity.getVeiculo().getPlaca() + " já existe.");
-        }
+      
+      // Verifica se já existe um aluguel com o mesmo cliente e veículo usando Stream
+      boolean aluguelExistente = alugueis.stream()
+          .anyMatch(a -> a.getCliente().getDocumento().equals(entity.getCliente().getDocumento())
+              && a.getVeiculo().getPlaca().equals(entity.getVeiculo().getPlaca()));
+          
+      if (aluguelExistente) {
+        throw new RuntimeException("Aluguel cujo o cliente com documento " + entity.getCliente().getDocumento()
+            + " e placa " + entity.getVeiculo().getPlaca() + " já existe.");
       }
+      
       alugueis.add(entity);
       jsonDataWriter.writeList(file, alugueis);
     } catch (IOException e) {
@@ -55,12 +60,18 @@ public class AluguelRepository implements IRepository<Aluguel> {
   @Override
   public void update(Aluguel entity) throws IOException {
     try {
-      Aluguel aluguelJson = findById(
-          entity.getCliente().getDocumento(), entity.getVeiculo().getPlaca()
-      );
-      List<Aluguel> alugueis =  new ArrayList<>(findAll());
-      alugueis.remove(aluguelJson);
-      alugueis.add(entity);
+      List<Aluguel> alugueis = new ArrayList<>(findAll());
+      
+      // Encontra o índice do aluguel a ser atualizado usando Stream
+      int index = IntStream.range(0, alugueis.size())
+          .filter(i -> alugueis.get(i).getCliente().getDocumento().equals(entity.getCliente().getDocumento())
+              && alugueis.get(i).getVeiculo().getPlaca().equals(entity.getVeiculo().getPlaca()))
+          .findFirst()
+          .orElseThrow(() -> new RuntimeException("Aluguel não encontrado para atualização"));
+      
+      // Atualiza o aluguel na lista
+      alugueis.set(index, entity);
+      
       jsonDataWriter.writeList(file, alugueis);
     } catch (IOException e) {
       throw new RuntimeException("Erro ao atualizar Aluguel: " + e.getMessage(), e);
@@ -75,10 +86,20 @@ public class AluguelRepository implements IRepository<Aluguel> {
   @Override
   public void delete(String documento, String placa) throws IOException {
     try {
-      Aluguel aluguelJson = findById(documento, placa);
       List<Aluguel> alugueis = new ArrayList<>(findAll());
-      alugueis.remove(aluguelJson);
-      jsonDataWriter.writeList(file, alugueis);
+      
+      // Remove o aluguel usando Stream e filter
+      List<Aluguel> alugueisAtualizados = alugueis.stream()
+          .filter(a -> !(a.getCliente().getDocumento().equals(documento) 
+              && a.getVeiculo().getPlaca().equals(placa)))
+          .collect(java.util.stream.Collectors.toList());
+      
+      // Verifica se algum item foi removido
+      if (alugueisAtualizados.size() == alugueis.size()) {
+        throw new RuntimeException("Aluguel não encontrado para exclusão");
+      }
+      
+      jsonDataWriter.writeList(file, alugueisAtualizados);
     } catch (IOException e) {
       throw new RuntimeException("Erro ao deletar Aluguel: " + e.getMessage(), e);
     }
