@@ -1,5 +1,6 @@
 package com.adacar.central;
 
+import com.adacar.central.enums.StatusLocacao;
 import com.adacar.central.enums.TipoVeiculo;
 import com.adacar.central.model.*;
 import com.adacar.central.repository.impl.AluguelRepository;
@@ -9,7 +10,9 @@ import com.adacar.central.service.interfaces.IDesconto;
 import com.adacar.central.service.interfaces.IPagamento;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,9 @@ public class MenuApplication {
 
     private static final ClienteService clienteService = new ClienteService();
     private static final VeiculoService veiculoService = new VeiculoService();
+    private static final AluguelRepository aluguelRepository = new AluguelRepository();
+    private static final RelatorioService relatorioService = new RelatorioService(aluguelRepository);
+
 
     private static final List<Aluguel> alugueisAtivos = new ArrayList<>();
 
@@ -65,6 +71,9 @@ public class MenuApplication {
                     case 9 -> removerVeiculo(scanner);
                     case 10 -> alugarVeiculo(scanner);
                     case 11 -> devolverVeiculo(scanner);
+                    case 12 -> gerarRelatorioFaturamento(scanner);
+                    case 13 -> gerarRelatorioUso();
+                    case 14 -> gerarRecibo(scanner);
                     case 0 -> {
                         System.out.println("Encerrando o sistema. Até logo! 👋");
                         scanner.close();
@@ -100,6 +109,10 @@ public class MenuApplication {
         System.out.println("=========== OPERAÇÕES ===========");
         System.out.println("10. Alugar Veículo");
         System.out.println("11. Devolver Veículo");
+        System.out.println("========== RELATÓRIOS ===========");
+        System.out.println("12. Gerar Relatório de Faturamento");
+        System.out.println("13. Gerar Relatórios de Uso (Veículos e Clientes)");
+        System.out.println("14. Gerar Recibo de Aluguel/Devolução");
         System.out.println("=================================");
         System.out.println("0. Sair");
         System.out.print("Escolha uma opção: ");
@@ -293,10 +306,14 @@ public class MenuApplication {
         IPagamento pagamentoService = new PagamentoService();
         AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
 
-        Aluguel novoAluguel = aluguelService.alugar(clienteOpt.get(), veiculo, localRetirada, LocalDateTime.now());
+        // Usa a variável dataRetirada na chamada do serviço
+        Aluguel novoAluguel = aluguelService.alugar(clienteOpt.get(), veiculo, localRetirada, dataRetirada);
         alugueisAtivos.add(novoAluguel);
 
+        // Exibe a data/hora na mensagem de sucesso
         System.out.println("\n✅ Veículo alugado com sucesso!");
+        System.out.println("   Data/Hora de Retirada: " + dataRetirada.toLocalTime().toString());
+        System.out.println("   Data: " + dataRetirada.toLocalDate().toString());
     }
 
     private static void devolverVeiculo(Scanner scanner) throws IOException {
@@ -313,6 +330,7 @@ public class MenuApplication {
         }
 
         Aluguel aluguelParaDevolver = aluguelOpt.get();
+
         System.out.print("Digite o local de devolução: ");
         String localDevolucao = scanner.nextLine();
 
@@ -323,9 +341,15 @@ public class MenuApplication {
 
         double valorTotal = aluguelService.devolver(aluguelParaDevolver, localDevolucao, dataDevolucao);
 
+        aluguelParaDevolver.setValorTotal(valorTotal);
+
+        aluguelService.devolver(aluguelParaDevolver, localDevolucao, dataDevolucao);
+
         alugueisAtivos.remove(aluguelParaDevolver);
 
         System.out.println("\n✅ Veículo devolvido com sucesso!");
+        System.out.println("   Local de Devolução: " + localDevolucao);
+        System.out.println("   Data/Hora de Devolução: " + dataDevolucao.toLocalDate().toString() + " às " + dataDevolucao.toLocalTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
         System.out.printf("Valor total a pagar: R$ %.2f\n", valorTotal);
     }
 

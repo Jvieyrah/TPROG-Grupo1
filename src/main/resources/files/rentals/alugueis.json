@@ -13,7 +13,10 @@
   },
   "localRetirada" : "São Paulo",
   "dataHoraRetirada" : [ 2023, 10, 1, 10, 0 ],
-  "dataHoraDevolucao" : [ 2023, 10, 5, 10, 0 ]
+  "dataHoraDevolucao" : [ 2023, 10, 5, 10, 0 ],
+  "statusLocacao" : null,
+  "valorTotal" : 0.0,
+  "status" : null
 }, {
   "cliente" : {
     "nome" : "João Vieira",
@@ -29,5 +32,198 @@
   },
   "localRetirada" : "Loja Centro",
   "dataHoraRetirada" : [ 2025, 9, 1, 23, 19, 19, 479783361 ],
-  "dataHoraDevolucao" : null
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : null,
+  "valorTotal" : 0.0,
+  "status" : null
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "EFG1234",
+    "nome" : "Carro K",
+    "tipo" : "MEDIO",
+    "valorDiaria" : 155.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "Itaquera",
+  "dataHoraRetirada" : [ 2025, 10, 6, 17, 51, 43, 608356300 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "BCD7890",
+    "nome" : "Carro J",
+    "tipo" : "PEQUENO",
+    "valorDiaria" : 95.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "B",
+  "dataHoraRetirada" : [ 2025, 10, 6, 17, 54, 1, 181959100 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "HIJ5678",
+    "nome" : "Carro L",
+    "tipo" : "SUV",
+    "valorDiaria" : 230.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "Itaquera",
+  "dataHoraRetirada" : [ 2025, 10, 6, 17, 57, 58, 478433100 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "ABC1234",
+    "nome" : "Carro A",
+    "tipo" : "PEQUENO",
+    "valorDiaria" : 100.0,
+    "status" : "DISPONIVEL"
+  },
+  "localRetirada" : "Itaquera",
+  "dataHoraRetirada" : [ 2025, 10, 6, 18, 2, 5, 792342200 ],
+  "dataHoraDevolucao" : [ 2025, 10, 7, 18, 2, 18, 672822900 ],
+  "statusLocacao" : "FINALIZADA",
+  "valorTotal" : 100.0,
+  "status" : "FINALIZADA"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "GHI9012",
+    "nome" : "Carro C",
+    "tipo" : "SUV",
+    "valorDiaria" : 200.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "arthur alvim",
+  "dataHoraRetirada" : [ 2025, 10, 6, 18, 5, 5, 702963900 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "STU5678",
+    "nome" : "Carro G",
+    "tipo" : "PEQUENO",
+    "valorDiaria" : 110.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "Rodonopolis",
+  "dataHoraRetirada" : [ 2025, 10, 6, 18, 7, 46, 44097600 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "VWX9012",
+    "nome" : "Carro H",
+    "tipo" : "MEDIO",
+    "valorDiaria" : 140.0,
+    "status" : "DISPONIVEL"
+  },
+  "localRetirada" : "aa",
+  "dataHoraRetirada" : [ 2025, 10, 6, 18, 9, 32, 683732200 ],
+  "dataHoraDevolucao" : [ 2025, 10, 30, 18, 15 ],
+  "statusLocacao" : "FINALIZADA",
+  "valorTotal" : 3192.0,
+  "status" : "FINALIZADA"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "YZA3456",
+    "nome" : "Carro I",
+    "tipo" : "SUV",
+    "valorDiaria" : 210.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "gasometro",
+  "dataHoraRetirada" : [ 2025, 1, 10, 10, 10 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "PQR1234",
+    "nome" : "Carro F",
+    "tipo" : "SUV",
+    "valorDiaria" : 220.0,
+    "status" : "ALUGADO"
+  },
+  "localRetirada" : "sss",
+  "dataHoraRetirada" : [ 2025, 1, 1, 10, 10 ],
+  "dataHoraDevolucao" : null,
+  "statusLocacao" : "EM_ANDAMENTO",
+  "valorTotal" : 0.0,
+  "status" : "EM_ANDAMENTO"
+}, {
+  "cliente" : {
+    "nome" : "joilson",
+    "documento" : "47462347873",
+    "cpf" : "47462347873"
+  },
+  "veiculo" : {
+    "placa" : "JKL3456",
+    "nome" : "Carro D",
+    "tipo" : "PEQUENO",
+    "valorDiaria" : 90.0,
+    "status" : "DISPONIVEL"
+  },
+  "localRetirada" : "itaquera",
+  "dataHoraRetirada" : [ 2025, 10, 6, 18, 22, 27, 531899000 ],
+  "dataHoraDevolucao" : [ 2025, 12, 20, 10, 10 ],
+  "statusLocacao" : "FINALIZADA",
+  "valorTotal" : 6412.5,
+  "status" : "FINALIZADA"
 } ]
