@@ -24,21 +24,14 @@ public class MenuApplication {
 
     private static final List<Aluguel> alugueisAtivos = new ArrayList<>();
 
-    // =================================================================================
-    // NOVOS: CONSUMERS PARA FORMATAÇÃO DA SAÍDA NO CONSOLE
-    // =================================================================================
-    /**
-     * Consumer para imprimir os dados de um Cliente de forma padronizada e legível.
-     */
+   //consumer
     private static final Consumer<Cliente> impressoraDeCliente = cliente -> {
         System.out.printf("| Nome: %-30s | Documento: %-18s |\n",
                 cliente.getNome(),
                 cliente.getDocumento());
     };
 
-    /**
-     * Consumer para imprimir os dados de um Veículo de forma padronizada e legível.
-     */
+    //consumerr
     private static final Consumer<Veiculo> impressoraDeVeiculo = veiculo -> {
         System.out.printf("| Placa: %-10s | Modelo: %-20s | Tipo: %-8s | Diária: R$ %-8.2f | Status: %s\n",
                 veiculo.getPlaca(),
