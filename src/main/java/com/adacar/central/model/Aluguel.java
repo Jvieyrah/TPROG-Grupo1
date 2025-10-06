@@ -14,6 +14,8 @@ public class Aluguel {
     private LocalDateTime dataHoraRetirada;
     private LocalDateTime dataHoraDevolucao;
     private StatusLocacao statusLocacao;
+    private double valorTotal;
+
 
     private double valorTotal;
 
@@ -106,4 +108,8 @@ public class Aluguel {
                 ", valorTotal" +
                 '}';
     }
+
+
+
+
 }
