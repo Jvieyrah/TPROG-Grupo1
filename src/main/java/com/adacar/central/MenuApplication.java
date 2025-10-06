@@ -2,10 +2,7 @@ package com.adacar.central;
 
 import com.adacar.central.enums.StatusLocacao;
 import com.adacar.central.enums.TipoVeiculo;
-import com.adacar.central.model.Aluguel;
-import com.adacar.central.model.Cliente;
-import com.adacar.central.model.PessoaFisica;
-import com.adacar.central.model.Veiculo;
+import com.adacar.central.model.*;
 import com.adacar.central.repository.impl.AluguelRepository;
 import com.adacar.central.repository.impl.VeiculoRepository;
 import com.adacar.central.service.impl.*;
@@ -20,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MenuApplication {
 
@@ -31,7 +30,27 @@ public class MenuApplication {
 
     private static final List<Aluguel> alugueisAtivos = new ArrayList<>();
 
+   //consumer
+    private static final Consumer<Cliente> impressoraDeCliente = cliente -> {
+        System.out.printf("| Nome: %-30s | Documento: %-18s |\n",
+                cliente.getNome(),
+                cliente.getDocumento());
+    };
+
+    //consumerr
+    private static final Consumer<Veiculo> impressoraDeVeiculo = veiculo -> {
+        System.out.printf("| Placa: %-10s | Modelo: %-20s | Tipo: %-8s | Diária: R$ %-8.2f | Status: %s\n",
+                veiculo.getPlaca(),
+                veiculo.getNome(),
+                veiculo.getTipo(),
+                veiculo.getValorDiaria(),
+                veiculo.getStatus());
+    };
+
+
     public static void main(String[] args) {
+
+        rodarTestesDeDesconto();
         Scanner scanner = new Scanner(System.in);
         int option;
 
@@ -120,9 +139,11 @@ public class MenuApplication {
     private static void buscarClientePorDocumento(Scanner scanner) {
         System.out.print("Digite o documento do cliente: ");
         String documento = scanner.nextLine();
+        System.out.println("\n--- RESULTADO DA BUSCA ---");
         clienteService.buscarPorDocumento(documento)
                 .ifPresentOrElse(
-                        cliente -> System.out.println("Cliente encontrado: " + cliente),
+                        // MODIFICADO: Usando o Consumer para imprimir
+                        impressoraDeCliente,
                         () -> System.out.println("Cliente não encontrado.")
                 );
     }
@@ -153,6 +174,8 @@ public class MenuApplication {
             }
         }
     }
+
+
 
     private static void cadastrarVeiculo(Scanner scanner) {
         try {
@@ -201,8 +224,10 @@ public class MenuApplication {
         System.out.print("Digite a placa do veículo: ");
         String placa = scanner.nextLine();
         Veiculo veiculo = veiculoService.buscarPorPlaca(placa);
+        System.out.println("\n--- RESULTADO DA BUSCA ---");
         if (veiculo != null) {
-            System.out.println("Veículo encontrado: " + veiculo);
+            // MODIFICADO: Usando o Consumer para imprimir
+            impressoraDeVeiculo.accept(veiculo);
         } else {
             System.out.println("Veículo não encontrado.");
         }
@@ -235,7 +260,7 @@ public class MenuApplication {
         }
     }
 
-      private static void removerVeiculo(Scanner scanner) {
+    private static void removerVeiculo(Scanner scanner) {
         System.out.print("Digite a placa do veículo que deseja remover: ");
         String placa = scanner.nextLine();
 
@@ -278,14 +303,7 @@ public class MenuApplication {
         System.out.print("Digite o local de retirada: ");
         String localRetirada = scanner.nextLine();
 
-        // Captura a data/hora atual antes de chamar o serviço
-        LocalDateTime dataRetirada = LocalDateTime.now();
-
-        IDesconto desconto = (clienteOpt.get() instanceof PessoaFisica)
-                ? new DescontoPessoaFisica()
-                : new DescontoPessoaJuridica();
-        IPagamento pagamentoService = new PagamentoService(desconto);
-
+        IPagamento pagamentoService = new PagamentoService();
         AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
 
         // Usa a variável dataRetirada na chamada do serviço
@@ -316,42 +334,12 @@ public class MenuApplication {
         System.out.print("Digite o local de devolução: ");
         String localDevolucao = scanner.nextLine();
 
-        // NOVO: Solicita a data de devolução no formato YYYY-MM-DD HH:MM
-        System.out.print("Digite a data e hora de devolução (Ex: 2025-12-20 10:10): ");
-        String dataDevolucaoStr = scanner.nextLine();
+        IPagamento pagamentoService = new PagamentoService();
+        AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
 
-        LocalDateTime dataDevolucao;
-        // Define o formatador que você deseja
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dataDevolucao = LocalDateTime.now().plusDays(5);
 
-        try {
-            // Tenta converter a string do usuário para LocalDateTime
-            dataDevolucao = LocalDateTime.parse(dataDevolucaoStr, formatter);
-
-            // Verifica se a data é posterior à retirada (lógica de negócio)
-            if (dataDevolucao.isBefore(aluguelParaDevolver.getDataHoraRetirada())) {
-                System.out.println("Erro: A data de devolução não pode ser anterior à data de retirada: " + aluguelParaDevolver.getDataHoraRetirada().toLocalDate().toString());
-                return;
-            }
-        } catch (java.time.format.DateTimeParseException e) {
-            System.out.println("Erro: Formato de data e hora inválido. Use o formato **YYYY-MM-DD HH:MM**.");
-            return;
-        }
-
-
-        IDesconto desconto = (aluguelParaDevolver.getCliente() instanceof PessoaFisica)
-                ? new DescontoPessoaFisica()
-                : new DescontoPessoaJuridica();
-        IPagamento pagamentoService = new PagamentoService(desconto);
-
-        // Usa o aluguelRepository estático para que o AluguelService persista corretamente
-        AluguelService aluguelService = new AluguelService(aluguelRepository, new VeiculoRepository(), pagamentoService);
-
-        // 1. Define a data de devolução no objeto (essencial para o cálculo)
-        aluguelParaDevolver.setDataHoraDevolucao(dataDevolucao);
-
-        // 2. Calcula o valor total
-        double valorTotal = pagamentoService.calcularValorTotal(aluguelParaDevolver);
+        double valorTotal = aluguelService.devolver(aluguelParaDevolver, localDevolucao, dataDevolucao);
 
         aluguelParaDevolver.setValorTotal(valorTotal);
 
@@ -364,89 +352,46 @@ public class MenuApplication {
         System.out.println("   Data/Hora de Devolução: " + dataDevolucao.toLocalDate().toString() + " às " + dataDevolucao.toLocalTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")));
         System.out.printf("Valor total a pagar: R$ %.2f\n", valorTotal);
     }
-    private static void gerarRelatorioFaturamento(Scanner scanner) {
-        System.out.println("\n--- GERAR RELATÓRIO DE FATURAMENTO ---");
-        System.out.print("Digite a data inicial para o período (YYYY-MM-DD): ");
-        String dataInicioStr = scanner.nextLine();
-        System.out.print("Digite a data final para o período (YYYY-MM-DD): ");
-        String dataFimStr = scanner.nextLine();
 
-        try {
-            LocalDate inicio = LocalDate.parse(dataInicioStr);
-            LocalDate fim = LocalDate.parse(dataFimStr);
+    //Teste para testar os descontos (REMOVER DEPOIS)
 
-            String caminhoArquivo = relatorioService.gerarFaturamentoPorPeriodo(inicio, fim);
+    private static void rodarTestesDeDesconto() {
+        System.out.println("\n--- INICIANDO TESTES AUTOMATIZADOS DE DESCONTO ---");
+        Cliente clientePF = new PessoaFisica("Cliente PF Teste", "12345678901");
+        Cliente clientePJ = new PessoaJuridica("Cliente PJ Teste", "12345678901234");
+        Veiculo veiculo = new Veiculo("TST-0001", "Veículo de Teste", TipoVeiculo.MEDIO);
+        veiculo.setValorDiaria(100.00);
 
-            System.out.println("✅ Relatório de Faturamento gerado com sucesso!");
-            System.out.println("   Salvo em: " + caminhoArquivo);
 
-        } catch (DateTimeParseException e) {
-            System.err.println("Erro: Formato de data inválido. Use o formato YYYY-MM-DD.");
-        } catch (Exception e) {
-            System.err.println("Erro ao gerar relatório de faturamento: " + e.getMessage());
-            e.printStackTrace();
-        }
+        IPagamento pagamentoService = new PagamentoService();
+
+        testarCenario("PF com 3 dias (sem desconto)", pagamentoService, clientePF, veiculo, 3, 300.00);
+
+        testarCenario("PF com 6 dias (com 5% de desconto)", pagamentoService, clientePF, veiculo, 6, 570.00);
+
+        testarCenario("PJ com 2 dias (sem desconto)", pagamentoService, clientePJ, veiculo, 2, 200.00);
+
+        testarCenario("PJ com 4 dias (com 10% de desconto)", pagamentoService, clientePJ, veiculo, 4, 360.00);
+
+        System.out.println("--- TESTES AUTOMATIZADOS FINALIZADOS ---\n");
     }
 
-    private static void gerarRelatorioUso() {
-        System.out.println("\n--- GERAR RELATÓRIOS DE USO ---");
-        try {
-            // CORREÇÃO: Usa a instância estática 'relatorioService' (declarada no topo da classe)
-            // Remove a linha 'RelatorioService relatorioService = null;' que causava o erro NullPointerException.
+    private static void testarCenario(String descricao, IPagamento pagamentoService, Cliente cliente, Veiculo veiculo, int dias, double valorEsperado) {
+        LocalDateTime dataRetirada = LocalDateTime.now();
+        LocalDateTime dataDevolucao = dataRetirada.plusDays(dias);
+        Aluguel aluguelTeste = new Aluguel(cliente, veiculo, "Filial Teste", dataRetirada);
+        aluguelTeste.setDataHoraDevolucao(dataDevolucao);
 
-            String veiculosFile = relatorioService.gerarVeiculosMaisAlugados();
-            String clientesFile = relatorioService.gerarClientesMaisAlugaram();
 
-            System.out.println(" Relatórios de Uso gerados com sucesso!");
-            System.out.println("   Veículos mais alugados salvo em: " + veiculosFile);
-            System.out.println("   Clientes que mais alugaram salvo em: " + clientesFile);
+        Function<Integer, Double> politicaDesconto = (cliente instanceof PessoaFisica)
+                ? VeiculoService.POLITICA_DESCONTO_PF
+                : VeiculoService.POLITICA_DESCONTO_PJ;
 
-        } catch (IOException e) {
-            System.err.println("Erro ao acessar os arquivos para gerar relatórios de uso: " + e.getMessage());
-        }
+        double valorCalculado = pagamentoService.calcularValorTotal(aluguelTeste, politicaDesconto);
+
+        boolean passou = Math.abs(valorEsperado - valorCalculado) < 0.01;
+
+        System.out.printf("Cenário: %-35s | Esperado: R$ %.2f | Calculado: R$ %.2f | Resultado: %s\n",
+                descricao, valorEsperado, valorCalculado, (passou ? "✅ PASSOU" : "❌ FALHOU"));
     }
-
-
-    private static void gerarRecibo(Scanner scanner) {
-        System.out.println("\n--- GERAR RECIBO ---");
-        System.out.print("Digite a placa do veículo associado ao aluguel (ativo ou finalizado): ");
-        String placa = scanner.nextLine();
-
-        Aluguel aluguel = null;
-
-        try {
-            // Tenta encontrar o aluguel na lista de ativos (para recibo de aluguel)
-            Optional<Aluguel> aluguelAtivoOpt = alugueisAtivos.stream()
-                    .filter(a -> a.getVeiculo().getPlaca().equalsIgnoreCase(placa))
-                    .findFirst();
-
-            if (aluguelAtivoOpt.isPresent()) {
-                aluguel = aluguelAtivoOpt.get();
-            } else {
-                // Se não está ativo, tenta buscar no arquivo (para recibo de devolução/histórico)
-                // OBS: Este método requer que você crie um método no AluguelRepository
-                // para buscar por placa, ou filtre todos os aluguéis.
-
-                // Exemplo simples: tenta buscar no arquivo se estiver finalizado
-                aluguel = aluguelRepository.findAll().stream()
-                        .filter(a -> a.getVeiculo().getPlaca().equalsIgnoreCase(placa) &&
-                                a.getStatus() == StatusLocacao.FINALIZADA)
-                        .findFirst()
-                        .orElse(null);
-            }
-
-            if (aluguel == null) {
-                System.out.println("Nenhum aluguel ativo ou finalizado recente encontrado para esta placa.");
-                return;
-            }
-
-            String caminhoArquivo = relatorioService.gerarRecibo(aluguel);
-            System.out.println("✅ Recibo gerado com sucesso! Salvo em: " + caminhoArquivo);
-
-        } catch (Exception e) {
-            System.err.println("Erro ao gerar recibo: " + e.getMessage());
-        }
-    }
-
-
 }

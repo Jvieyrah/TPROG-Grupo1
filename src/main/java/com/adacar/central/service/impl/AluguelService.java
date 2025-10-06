@@ -4,12 +4,14 @@ import com.adacar.central.enums.StatusLocacao;
 import com.adacar.central.enums.StatusVeiculo;
 import com.adacar.central.model.Aluguel;
 import com.adacar.central.model.Cliente;
+import com.adacar.central.model.PessoaFisica; // Importar
 import com.adacar.central.model.Veiculo;
 import com.adacar.central.repository.interfaces.IRepository;
 import com.adacar.central.service.interfaces.IPagamento;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.function.Function; // Importar
 
 public class AluguelService {
     private final IRepository<Aluguel> aluguelRepository;
@@ -34,12 +36,22 @@ public class AluguelService {
         return aluguel;
     }
 
-    public void devolver(Aluguel aluguel, String filialDevolucao, LocalDateTime dataDevolucao) throws IOException {
+
+    public double devolver(Aluguel aluguel, String filialDevolucao, LocalDateTime dataDevolucao) throws IOException {
         aluguel.setDataHoraDevolucao(dataDevolucao);
         aluguel.setStatus(StatusLocacao.FINALIZADA);
+
+
+        Function<Integer, Double> politicaDesconto = (aluguel.getCliente() instanceof PessoaFisica)
+                ? VeiculoService.POLITICA_DESCONTO_PF
+                : VeiculoService.POLITICA_DESCONTO_PJ;
+
+        double valorTotal = this.pagamento.calcularValorTotal(aluguel, politicaDesconto);
 
         aluguel.getVeiculo().setStatus(StatusVeiculo.DISPONIVEL);
         this.aluguelRepository.update(aluguel);
         this.veiculoRepository.update(aluguel.getVeiculo());
+
+        return valorTotal;
     }
 }
