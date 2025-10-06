@@ -27,6 +27,12 @@ public class JsonDataWriter<T> implements IDataWriter<T> {
 
   @Override
   public void writeList(File file, List<T> data) throws IOException {
-    objectMapper.writeValue(file, data);
+    // Usa FileOutputStream + OutputStreamWriter + BufferedWriter para escrita textual buffered.
+    try (java.io.OutputStream fos = new java.io.FileOutputStream(file);
+         java.io.Writer osw = new java.io.OutputStreamWriter(fos, java.nio.charset.StandardCharsets.UTF_8);
+         java.io.BufferedWriter writer = new java.io.BufferedWriter(osw)) {
+      objectMapper.writeValue(writer, data);
+      writer.flush();
+    }
   }
 }
