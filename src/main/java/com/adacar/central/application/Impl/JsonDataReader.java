@@ -29,6 +29,11 @@ public class JsonDataReader<T> implements  IDataListReader<T> {
 
   @Override
   public List<T> readList(File file, Class<T> type) throws IOException {
-    return objectMapper.readValue(file, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+    // Usa FileInputStream + InputStreamReader + BufferedReader para leitura textual.
+    try (java.io.InputStream fis = new java.io.FileInputStream(file);
+         java.io.Reader isr = new java.io.InputStreamReader(fis, java.nio.charset.StandardCharsets.UTF_8);
+         java.io.BufferedReader reader = new java.io.BufferedReader(isr)) {
+      return objectMapper.readValue(reader, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+    }
   }
 }
