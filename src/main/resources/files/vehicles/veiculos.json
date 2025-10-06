@@ -15,62 +15,59 @@
   "nome" : "Carro C",
   "tipo" : "SUV",
   "valorDiaria" : 200.0,
+  "status" : "ALUGADO"
+}, {
+  "placa" : "JKL3456",
+  "nome" : "Carro D",
+  "tipo" : "PEQUENO",
+  "valorDiaria" : 90.0,
   "status" : "DISPONIVEL"
-},
-  {
-    "placa" : "JKL3456",
-    "nome" : "Carro D",
-    "tipo" : "PEQUENO",
-    "valorDiaria" : 90.0,
-    "status" : "DISPONIVEL"
-  }, {
-    "placa" : "MNO7890",
-    "nome" : "Carro E",
-    "tipo" : "MEDIO",
-    "valorDiaria" : 160.0,
-    "status" : "DISPONIVEL"
-  } , {
-    "placa" : "PQR1234",
-    "nome" : "Carro F",
-    "tipo" : "SUV",
-    "valorDiaria" : 220.0,
-    "status" : "DISPONIVEL"
-  },
-  {
-    "placa" : "STU5678",
-    "nome" : "Carro G",
-    "tipo" : "PEQUENO",
-    "valorDiaria" : 110.0,
-    "status" : "DISPONIVEL"
-  }, {
-    "placa" : "VWX9012",
-    "nome" : "Carro H",
-    "tipo" : "MEDIO",
-    "valorDiaria" : 140.0,
-    "status" : "DISPONIVEL"
-  } , {
-    "placa" : "YZA3456",
-    "nome" : "Carro I",
-    "tipo" : "SUV",
-    "valorDiaria" : 210.0,
-    "status" : "DISPONIVEL"
-  },
-  {
-    "placa" : "BCD7890",
-    "nome" : "Carro J",
-    "tipo" : "PEQUENO",
-    "valorDiaria" : 95.0,
-    "status" : "DISPONIVEL"
-  }, {
-    "placa" : "EFG1234",
-    "nome" : "Carro K",
-    "tipo" : "MEDIO",
-    "valorDiaria" : 155.0,
-    "status" : "DISPONIVEL"
-  } , {
-    "placa" : "HIJ5678",
-    "nome" : "Carro L",
-    "tipo" : "SUV",
-    "valorDiaria" : 230.0,
-    "status" : "DISPONIVEL"
-  }]
+}, {
+  "placa" : "MNO7890",
+  "nome" : "Carro E",
+  "tipo" : "MEDIO",
+  "valorDiaria" : 160.0,
+  "status" : "DISPONIVEL"
+}, {
+  "placa" : "PQR1234",
+  "nome" : "Carro F",
+  "tipo" : "SUV",
+  "valorDiaria" : 220.0,
+  "status" : "ALUGADO"
+}, {
+  "placa" : "STU5678",
+  "nome" : "Carro G",
+  "tipo" : "PEQUENO",
+  "valorDiaria" : 110.0,
+  "status" : "ALUGADO"
+}, {
+  "placa" : "VWX9012",
+  "nome" : "Carro H",
+  "tipo" : "MEDIO",
+  "valorDiaria" : 140.0,
+  "status" : "DISPONIVEL"
+}, {
+  "placa" : "YZA3456",
+  "nome" : "Carro I",
+  "tipo" : "SUV",
+  "valorDiaria" : 210.0,
+  "status" : "ALUGADO"
+}, {
+  "placa" : "BCD7890",
+  "nome" : "Carro J",
+  "tipo" : "PEQUENO",
+  "valorDiaria" : 95.0,
+  "status" : "ALUGADO"
+}, {
+  "placa" : "EFG1234",
+  "nome" : "Carro K",
+  "tipo" : "MEDIO",
+  "valorDiaria" : 155.0,
+  "status" : "ALUGADO"
+}, {
+  "placa" : "HIJ5678",
+  "nome" : "Carro L",
+  "tipo" : "SUV",
+  "valorDiaria" : 230.0,
+  "status" : "ALUGADO"
+} ]

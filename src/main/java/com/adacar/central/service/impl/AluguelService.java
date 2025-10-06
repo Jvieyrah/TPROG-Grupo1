@@ -7,6 +7,7 @@ import com.adacar.central.model.Cliente;
 import com.adacar.central.model.Veiculo;
 import com.adacar.central.repository.interfaces.IRepository;
 import com.adacar.central.service.interfaces.IPagamento;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -36,8 +37,6 @@ public class AluguelService {
     public void devolver(Aluguel aluguel, String filialDevolucao, LocalDateTime dataDevolucao) throws IOException {
         aluguel.setDataHoraDevolucao(dataDevolucao);
         aluguel.setStatus(StatusLocacao.FINALIZADA);
-
-        this.pagamento.calcularValorTotal(aluguel);
 
         aluguel.getVeiculo().setStatus(StatusVeiculo.DISPONIVEL);
         this.aluguelRepository.update(aluguel);
