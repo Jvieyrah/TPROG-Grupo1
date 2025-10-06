@@ -1,10 +1,7 @@
 package com.adacar.central;
 
 import com.adacar.central.enums.TipoVeiculo;
-import com.adacar.central.model.Aluguel;
-import com.adacar.central.model.Cliente;
-import com.adacar.central.model.PessoaFisica;
-import com.adacar.central.model.Veiculo;
+import com.adacar.central.model.*;
 import com.adacar.central.repository.impl.AluguelRepository;
 import com.adacar.central.repository.impl.VeiculoRepository;
 import com.adacar.central.service.impl.*;
@@ -17,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MenuApplication {
 
@@ -25,7 +24,27 @@ public class MenuApplication {
 
     private static final List<Aluguel> alugueisAtivos = new ArrayList<>();
 
+   //consumer
+    private static final Consumer<Cliente> impressoraDeCliente = cliente -> {
+        System.out.printf("| Nome: %-30s | Documento: %-18s |\n",
+                cliente.getNome(),
+                cliente.getDocumento());
+    };
+
+    //consumerr
+    private static final Consumer<Veiculo> impressoraDeVeiculo = veiculo -> {
+        System.out.printf("| Placa: %-10s | Modelo: %-20s | Tipo: %-8s | Diária: R$ %-8.2f | Status: %s\n",
+                veiculo.getPlaca(),
+                veiculo.getNome(),
+                veiculo.getTipo(),
+                veiculo.getValorDiaria(),
+                veiculo.getStatus());
+    };
+
+
     public static void main(String[] args) {
+
+        rodarTestesDeDesconto();
         Scanner scanner = new Scanner(System.in);
         int option;
 
@@ -107,9 +126,11 @@ public class MenuApplication {
     private static void buscarClientePorDocumento(Scanner scanner) {
         System.out.print("Digite o documento do cliente: ");
         String documento = scanner.nextLine();
+        System.out.println("\n--- RESULTADO DA BUSCA ---");
         clienteService.buscarPorDocumento(documento)
                 .ifPresentOrElse(
-                        cliente -> System.out.println("Cliente encontrado: " + cliente),
+                        // MODIFICADO: Usando o Consumer para imprimir
+                        impressoraDeCliente,
                         () -> System.out.println("Cliente não encontrado.")
                 );
     }
@@ -140,6 +161,8 @@ public class MenuApplication {
             }
         }
     }
+
+
 
     private static void cadastrarVeiculo(Scanner scanner) {
         try {
@@ -188,8 +211,10 @@ public class MenuApplication {
         System.out.print("Digite a placa do veículo: ");
         String placa = scanner.nextLine();
         Veiculo veiculo = veiculoService.buscarPorPlaca(placa);
+        System.out.println("\n--- RESULTADO DA BUSCA ---");
         if (veiculo != null) {
-            System.out.println("Veículo encontrado: " + veiculo);
+            // MODIFICADO: Usando o Consumer para imprimir
+            impressoraDeVeiculo.accept(veiculo);
         } else {
             System.out.println("Veículo não encontrado.");
         }
@@ -222,7 +247,7 @@ public class MenuApplication {
         }
     }
 
-      private static void removerVeiculo(Scanner scanner) {
+    private static void removerVeiculo(Scanner scanner) {
         System.out.print("Digite a placa do veículo que deseja remover: ");
         String placa = scanner.nextLine();
 
@@ -265,11 +290,7 @@ public class MenuApplication {
         System.out.print("Digite o local de retirada: ");
         String localRetirada = scanner.nextLine();
 
-        IDesconto desconto = (clienteOpt.get() instanceof PessoaFisica)
-                ? new DescontoPessoaFisica()
-                : new DescontoPessoaJuridica();
-        IPagamento pagamentoService = new PagamentoService(desconto);
-
+        IPagamento pagamentoService = new PagamentoService();
         AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
 
         Aluguel novoAluguel = aluguelService.alugar(clienteOpt.get(), veiculo, localRetirada, LocalDateTime.now());
@@ -295,20 +316,58 @@ public class MenuApplication {
         System.out.print("Digite o local de devolução: ");
         String localDevolucao = scanner.nextLine();
 
-        IDesconto desconto = (aluguelParaDevolver.getCliente() instanceof PessoaFisica)
-                ? new DescontoPessoaFisica()
-                : new DescontoPessoaJuridica();
-        IPagamento pagamentoService = new PagamentoService(desconto);
+        IPagamento pagamentoService = new PagamentoService();
         AluguelService aluguelService = new AluguelService(new AluguelRepository(), new VeiculoRepository(), pagamentoService);
 
-        LocalDateTime dataDevolucao = LocalDateTime.now().plusDays(1);
+        LocalDateTime dataDevolucao = LocalDateTime.now().plusDays(5);
 
-        aluguelService.devolver(aluguelParaDevolver, localDevolucao, dataDevolucao);
-        double valorTotal = pagamentoService.calcularValorTotal(aluguelParaDevolver);
+        double valorTotal = aluguelService.devolver(aluguelParaDevolver, localDevolucao, dataDevolucao);
 
         alugueisAtivos.remove(aluguelParaDevolver);
 
         System.out.println("\n✅ Veículo devolvido com sucesso!");
         System.out.printf("Valor total a pagar: R$ %.2f\n", valorTotal);
+    }
+
+    //Teste para testar os descontos (REMOVER DEPOIS)
+
+    private static void rodarTestesDeDesconto() {
+        System.out.println("\n--- INICIANDO TESTES AUTOMATIZADOS DE DESCONTO ---");
+        Cliente clientePF = new PessoaFisica("Cliente PF Teste", "12345678901");
+        Cliente clientePJ = new PessoaJuridica("Cliente PJ Teste", "12345678901234");
+        Veiculo veiculo = new Veiculo("TST-0001", "Veículo de Teste", TipoVeiculo.MEDIO);
+        veiculo.setValorDiaria(100.00);
+
+
+        IPagamento pagamentoService = new PagamentoService();
+
+        testarCenario("PF com 3 dias (sem desconto)", pagamentoService, clientePF, veiculo, 3, 300.00);
+
+        testarCenario("PF com 6 dias (com 5% de desconto)", pagamentoService, clientePF, veiculo, 6, 570.00);
+
+        testarCenario("PJ com 2 dias (sem desconto)", pagamentoService, clientePJ, veiculo, 2, 200.00);
+
+        testarCenario("PJ com 4 dias (com 10% de desconto)", pagamentoService, clientePJ, veiculo, 4, 360.00);
+
+        System.out.println("--- TESTES AUTOMATIZADOS FINALIZADOS ---\n");
+    }
+
+    private static void testarCenario(String descricao, IPagamento pagamentoService, Cliente cliente, Veiculo veiculo, int dias, double valorEsperado) {
+        LocalDateTime dataRetirada = LocalDateTime.now();
+        LocalDateTime dataDevolucao = dataRetirada.plusDays(dias);
+        Aluguel aluguelTeste = new Aluguel(cliente, veiculo, "Filial Teste", dataRetirada);
+        aluguelTeste.setDataHoraDevolucao(dataDevolucao);
+
+
+        Function<Integer, Double> politicaDesconto = (cliente instanceof PessoaFisica)
+                ? VeiculoService.POLITICA_DESCONTO_PF
+                : VeiculoService.POLITICA_DESCONTO_PJ;
+
+        double valorCalculado = pagamentoService.calcularValorTotal(aluguelTeste, politicaDesconto);
+
+        boolean passou = Math.abs(valorEsperado - valorCalculado) < 0.01;
+
+        System.out.printf("Cenário: %-35s | Esperado: R$ %.2f | Calculado: R$ %.2f | Resultado: %s\n",
+                descricao, valorEsperado, valorCalculado, (passou ? "✅ PASSOU" : "❌ FALHOU"));
     }
 }
