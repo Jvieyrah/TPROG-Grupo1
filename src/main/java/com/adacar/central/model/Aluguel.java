@@ -14,6 +14,8 @@ public class Aluguel {
     private LocalDateTime dataHoraRetirada;
     private LocalDateTime dataHoraDevolucao;
     private StatusLocacao statusLocacao;
+    private double valorTotal;
+
 
     public Aluguel() {
     }
@@ -25,6 +27,7 @@ public class Aluguel {
         this.localRetirada = localRetirada;
         this.dataHoraRetirada = dataHoraRetirada;
         this.statusLocacao = StatusLocacao.EM_ANDAMENTO;
+        this.valorTotal = 0.0;
     }
 
     public Cliente getCliente() {
@@ -75,6 +78,22 @@ public class Aluguel {
         this.dataHoraDevolucao = dataHoraDevolucao;
     }
 
+    public StatusLocacao getStatusLocacao() {
+        return statusLocacao;
+    }
+
+    public void setStatusLocacao(StatusLocacao statusLocacao) {
+        this.statusLocacao = statusLocacao;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
     @Override
     public String toString() {
         return "Aluguel{" +
@@ -83,6 +102,11 @@ public class Aluguel {
                 ", localRetirada='" + localRetirada + '\'' +
                 ", dataHoraRetirada=" + dataHoraRetirada +
                 ", dataHoraDevolucao=" + dataHoraDevolucao +
+                ", valorTotal" +
                 '}';
     }
+
+
+
+
 }

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PessoaFisicaRepository implements IRepository<PessoaFisica> {
@@ -19,7 +20,8 @@ public class PessoaFisicaRepository implements IRepository<PessoaFisica> {
 
   @Override
   public List<PessoaFisica> findAll() throws IOException {
-    return  jsonDataReader.readList(file, PessoaFisica.class);
+    // Create a defensive copy of the list to avoid concurrent modification issues
+    return new ArrayList<>(jsonDataReader.readList(file, PessoaFisica.class));
   }
 
   @Override
@@ -39,11 +41,16 @@ public class PessoaFisicaRepository implements IRepository<PessoaFisica> {
   public void save(PessoaFisica entity) {
     try {
       List<PessoaFisica> pessoasFisicas = new ArrayList<>(findAll());
-for (PessoaFisica pessoaFisica : pessoasFisicas){
-        if (pessoaFisica.getDocumento().equals(entity.getDocumento())){
-          throw new RuntimeException("Pessoa Física com documento " + entity.getDocumento() + " já existe.");
-        }
+      
+      // Verifica se já existe uma pessoa com o mesmo documento usando Stream
+      boolean documentoExistente = pessoasFisicas.stream()
+          .map(PessoaFisica::getDocumento)
+          .anyMatch(doc -> doc.equals(entity.getDocumento()));
+          
+      if (documentoExistente) {
+        throw new RuntimeException("Pessoa Física com documento " + entity.getDocumento() + " já existe.");
       }
+      
       pessoasFisicas.add(entity);
       jsonDataWriter.writeList(file, pessoasFisicas);
     } catch (IOException e) {
@@ -51,30 +58,46 @@ for (PessoaFisica pessoaFisica : pessoasFisicas){
     }
   }
 
-  @Override
-  public void update(PessoaFisica entity) throws IOException {
-     try {
-        PessoaFisica pessoasFisicaJson = findById(entity.getDocumento());
-        //acha emeu documento
-        List<PessoaFisica> pessoasFisicas = new ArrayList<>(findAll());
-        //lista existente
-        pessoasFisicas.remove(pessoasFisicaJson);
-        //remove o antigo
-        pessoasFisicas.add(entity);
-        //adiciona o novo
-        jsonDataWriter.writeList(file, pessoasFisicas);
-      } catch (IOException e) {
-        throw new RuntimeException("Erro ao atualizar Pessoa Física: " + e.getMessage(), e);
-     }
-  }
+    @Override
+    public void update(PessoaFisica entity) throws IOException {
+        if (entity == null || entity.getDocumento() == null) {
+            throw new IllegalArgumentException("Pessoa Física ou documento não pode ser nulo");
+        }
+        
+        List<PessoaFisica> pessoasFisicas = jsonDataReader.readList(file, PessoaFisica.class);
+        
+        // Encontra o índice da pessoa usando Stream
+        int index = IntStream.range(0, pessoasFisicas.size())
+            .filter(i -> pessoasFisicas.get(i).getDocumento().equals(entity.getDocumento()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Pessoa Física não encontrada para atualização: " + entity.getDocumento()));
+        
+        // Atualiza a pessoa na lista
+        pessoasFisicas.set(index, entity);
+        
+        try {
+            jsonDataWriter.writeList(file, pessoasFisicas);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao atualizar Pessoa Física: " + e.getMessage(), e);
+        }
+    }
 
   @Override
-  public void delete(String id)  throws IOException  {
+  public void delete(String id) throws IOException {
     try {
-      PessoaFisica pessoasFisicaJson = findById(id);
       List<PessoaFisica> pessoasFisicas = new ArrayList<>(findAll());
-      pessoasFisicas.remove(pessoasFisicaJson);
-      jsonDataWriter.writeList(file, pessoasFisicas);
+      
+      // Remove a pessoa usando Stream e filter
+      List<PessoaFisica> pessoasAtualizadas = pessoasFisicas.stream()
+          .filter(p -> !p.getDocumento().equals(id))
+          .collect(java.util.stream.Collectors.toList());
+      
+      // Verifica se algum item foi removido
+      if (pessoasAtualizadas.size() == pessoasFisicas.size()) {
+        throw new RuntimeException("Pessoa Física com documento " + id + " não encontrada para exclusão.");
+      }
+      
+      jsonDataWriter.writeList(file, pessoasAtualizadas);
     } catch (IOException e) {
       throw new RuntimeException("Erro ao deletar Pessoa Física: " + e.getMessage(), e);
     }
