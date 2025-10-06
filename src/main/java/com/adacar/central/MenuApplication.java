@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class MenuApplication {
@@ -22,6 +23,31 @@ public class MenuApplication {
     private static final VeiculoService veiculoService = new VeiculoService();
 
     private static final List<Aluguel> alugueisAtivos = new ArrayList<>();
+
+    // =================================================================================
+    // NOVOS: CONSUMERS PARA FORMATAÇÃO DA SAÍDA NO CONSOLE
+    // =================================================================================
+    /**
+     * Consumer para imprimir os dados de um Cliente de forma padronizada e legível.
+     */
+    private static final Consumer<Cliente> impressoraDeCliente = cliente -> {
+        System.out.printf("| Nome: %-30s | Documento: %-18s |\n",
+                cliente.getNome(),
+                cliente.getDocumento());
+    };
+
+    /**
+     * Consumer para imprimir os dados de um Veículo de forma padronizada e legível.
+     */
+    private static final Consumer<Veiculo> impressoraDeVeiculo = veiculo -> {
+        System.out.printf("| Placa: %-10s | Modelo: %-20s | Tipo: %-8s | Diária: R$ %-8.2f | Status: %s\n",
+                veiculo.getPlaca(),
+                veiculo.getNome(),
+                veiculo.getTipo(),
+                veiculo.getValorDiaria(),
+                veiculo.getStatus());
+    };
+
 
     public static void main(String[] args) {
 
@@ -107,9 +133,11 @@ public class MenuApplication {
     private static void buscarClientePorDocumento(Scanner scanner) {
         System.out.print("Digite o documento do cliente: ");
         String documento = scanner.nextLine();
+        System.out.println("\n--- RESULTADO DA BUSCA ---");
         clienteService.buscarPorDocumento(documento)
                 .ifPresentOrElse(
-                        cliente -> System.out.println("Cliente encontrado: " + cliente),
+                        // MODIFICADO: Usando o Consumer para imprimir
+                        impressoraDeCliente,
                         () -> System.out.println("Cliente não encontrado.")
                 );
     }
@@ -118,11 +146,13 @@ public class MenuApplication {
         System.out.println("\n--- LISTA DE TODOS OS CLIENTES ---");
         Optional<List<Cliente>> clientesOpt = clienteService.listarTodos();
         if (clientesOpt.isPresent() && !clientesOpt.get().isEmpty()) {
-            clientesOpt.get().forEach(System.out::println);
+            // MODIFICADO: Usando o Consumer no forEach
+            clientesOpt.get().forEach(impressoraDeCliente);
         } else {
             System.out.println("Nenhum cliente cadastrado.");
         }
     }
+
 
 
     private static void cadastrarVeiculo(Scanner scanner) {
@@ -172,8 +202,10 @@ public class MenuApplication {
         System.out.print("Digite a placa do veículo: ");
         String placa = scanner.nextLine();
         Veiculo veiculo = veiculoService.buscarPorPlaca(placa);
+        System.out.println("\n--- RESULTADO DA BUSCA ---");
         if (veiculo != null) {
-            System.out.println("Veículo encontrado: " + veiculo);
+            // MODIFICADO: Usando o Consumer para imprimir
+            impressoraDeVeiculo.accept(veiculo);
         } else {
             System.out.println("Veículo não encontrado.");
         }
@@ -185,7 +217,8 @@ public class MenuApplication {
         if (disponiveis.isEmpty()) {
             System.out.println("Nenhum veículo disponível no momento.");
         } else {
-            disponiveis.forEach(System.out::println);
+            // MODIFICADO: Usando o Consumer no forEach
+            disponiveis.forEach(impressoraDeVeiculo);
         }
     }
 
