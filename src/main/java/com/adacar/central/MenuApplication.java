@@ -136,13 +136,29 @@ public class MenuApplication {
     }
 
     private static void listarTodosClientes() {
-        System.out.println("\n--- LISTA DE TODOS OS CLIENTES ---");
-        Optional<List<Cliente>> clientesOpt = clienteService.listarTodos();
-        if (clientesOpt.isPresent() && !clientesOpt.get().isEmpty()) {
-            // MODIFICADO: Usando o Consumer no forEach
-            clientesOpt.get().forEach(impressoraDeCliente);
-        } else {
-            System.out.println("Nenhum cliente cadastrado.");
+        int skip = 0;
+        int limit = 10;
+        Boolean repeat = true;
+        while (repeat) {
+            System.out.println("\n--- LISTA DE TODOS OS CLIENTES ---");
+            System.out.println("\n--- pagina  " + (skip / limit + 1) + "  (mostrando " + limit
+                + " por pagina)---");
+            Optional<List<Cliente>> clientesOpt = clienteService.listarTodosComPaginacao(skip,
+                limit);
+            if (clientesOpt.isEmpty() || clientesOpt.get().isEmpty()) {
+                System.out.println("Você esgotou a lista.");
+            }
+            clientesOpt.get().forEach(System.out::println);
+
+            System.out.println(
+                "\nOpções: [N] Próxima página | [P] Página anterior | [S] Sair da listagem");
+            String escolha = new Scanner(System.in).nextLine().trim().toUpperCase();
+            switch (escolha) {
+                case "N" -> skip += limit;
+                case "P" -> skip -= limit;
+                case "S" -> repeat = false;
+                default -> System.out.println("Opção inválida! Por favor, tente novamente.");
+            }
         }
     }
 
@@ -205,13 +221,29 @@ public class MenuApplication {
     }
 
     private static void listarVeiculosDisponiveis() {
-        System.out.println("\n--- VEÍCULOS DISPONÍVEIS PARA ALUGUEL ---");
-        List<Veiculo> disponiveis = veiculoService.listarDisponiveis();
-        if (disponiveis.isEmpty()) {
-            System.out.println("Nenhum veículo disponível no momento.");
-        } else {
-            // MODIFICADO: Usando o Consumer no forEach
-            disponiveis.forEach(impressoraDeVeiculo);
+        int skip = 0;
+        int limit = 10;
+        Boolean repeat = true;
+        while (repeat) {
+            System.out.println("\n--- LISTA DE VEÍCULOS DISPONÍVEIS ---");
+            System.out.println("\n--- pagina  " + (skip / limit + 1) + "  (mostrando " + limit
+                + " por pagina)---");
+            Optional<List<Veiculo>> veiculosOpt = veiculoService
+                .listarTodosDisponiveisPaginacao(skip, limit);
+            if (veiculosOpt.isEmpty() || veiculosOpt.get().isEmpty()) {
+                System.out.println("Você esgotou a lista.");
+            }
+            veiculosOpt.get().forEach(System.out::println);
+
+            System.out.println(
+                "\nOpções: [N] Próxima página | [P] Página anterior | [S] Sair da listagem");
+            String escolha = new Scanner(System.in).nextLine().trim().toUpperCase();
+            switch (escolha) {
+                case "N" -> skip += limit;
+                case "P" -> skip -= limit;
+                case "S" -> repeat = false;
+                default -> System.out.println("Opção inválida! Por favor, tente novamente.");
+            }
         }
     }
 

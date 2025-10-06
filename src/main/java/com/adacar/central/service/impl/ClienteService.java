@@ -3,6 +3,7 @@ package com.adacar.central.service.impl;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
+
 import com.adacar.central.model.Cliente;
 import com.adacar.central.model.PessoaFisica;
 import com.adacar.central.model.PessoaJuridica;
@@ -15,6 +16,7 @@ import com.adacar.central.service.interfaces.IClienteService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -134,6 +136,26 @@ public class ClienteService implements IClienteService {
       clientes.addAll(pessoasJuridicas);
       clientes.addAll(pessoasFisicas);
       return Optional.of(clientes);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return Optional.empty();
+    }
+  }
+
+  @Override
+  public Optional<List<Cliente>> listarTodosComPaginacao(int skip, int limit) {
+    try {
+    return listarTodos().stream()
+        .flatMap(List::stream)
+        .skip(skip)
+        .limit(limit)
+        .toList()
+        .stream()
+        .collect(() -> Optional.of(new ArrayList<>()),
+            (optList, cliente) -> optList.ifPresent(list -> list.add(cliente)),
+            (optList1, optList2) -> optList1.ifPresent(list1 ->
+                optList2.ifPresent(list2 -> list1.addAll(list2)))
+        );
     } catch (Exception e) {
       e.printStackTrace();
       return Optional.empty();

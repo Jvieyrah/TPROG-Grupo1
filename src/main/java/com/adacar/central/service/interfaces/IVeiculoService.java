@@ -12,6 +12,7 @@ public interface IVeiculoService {
     Veiculo buscarPorPlaca(String placa);
     Veiculo buscarPorParteNome(String nome);
     Optional<List<Veiculo>> listarTodos();
+    Optional<List<Veiculo>> listarTodosDisponiveisPaginacao(int skip, int limit);
     String remover(String placa);
     List<Veiculo> listarDisponiveis();
 }
