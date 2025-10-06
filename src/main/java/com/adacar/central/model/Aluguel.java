@@ -17,9 +17,6 @@ public class Aluguel {
     private double valorTotal;
 
 
-    private double valorTotal;
-
-
     public Aluguel() {
     }
 
